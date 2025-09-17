@@ -13,7 +13,6 @@ import {
   Heart,
   Bell,
   Calculator,
-  Settings,
   LogOut,
   Menu,
   User,

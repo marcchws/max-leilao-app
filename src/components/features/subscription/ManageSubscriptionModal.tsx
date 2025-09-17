@@ -103,7 +103,7 @@ export function ManageSubscriptionModal({
       alert(`Upgrade para ${availablePlans.find(p => p.id === planId)?.name} realizado com sucesso!`)
       onUpgrade?.(planId)
       onClose()
-    } catch (error) {
+    } catch {
       alert('Erro ao fazer upgrade. Tente novamente.')
     } finally {
       setIsLoading(false)

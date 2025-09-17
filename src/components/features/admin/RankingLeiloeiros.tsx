@@ -6,15 +6,15 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { 
   BarChart3, 
-  Calendar,
+
   TrendingUp,
   ExternalLink,
   Award,
   Target
 } from 'lucide-react'
 import { 
-  AuctioneerClickData, 
-  PeriodFilter, 
+ 
+ 
   periodFilters,
   mockAuctioneerClicks 
 } from '@/lib/mock-data'

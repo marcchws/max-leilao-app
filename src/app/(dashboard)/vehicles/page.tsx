@@ -33,11 +33,6 @@ export default function VehiclesPage() {
     return 0
   }
   
-  // Funções de controle de acesso
-  const canViewVehicles = () => true // Todos podem ver veículos
-  const canUsePremiumFeatures = () => {
-    return user?.subscriptionStatus === 'active' || user?.subscriptionStatus === 'trial'
-  }
 
   // Aplicar filtros aos veículos
   useEffect(() => {

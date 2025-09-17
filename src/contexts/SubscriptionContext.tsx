@@ -169,7 +169,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
         // Carregamento concluído
         console.log('Subscription data loaded successfully')
         
-      } catch (err) {
+      } catch {
         setError('Erro ao carregar dados da assinatura')
         console.error('Erro ao carregar dados:', err)
       } finally {

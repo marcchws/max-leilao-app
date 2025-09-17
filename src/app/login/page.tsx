@@ -85,7 +85,7 @@ export default function LoginPage() {
           setError(result.error || 'Erro ao criar conta')
         }
       }
-    } catch (err) {
+    } catch {
       setError('Erro interno do servidor')
     } finally {
       setIsLoading(false)

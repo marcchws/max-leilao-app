@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { 
   CreditCard, 
   Lock, 
-  Check,
+
   Plus,
   Trash2,
   AlertCircle
@@ -81,7 +81,7 @@ export function PaymentMethodModal({ isOpen, onClose }: PaymentMethodModalProps)
       setShowAddForm(false)
       setNewCard({ number: '', expiryDate: '', cvv: '', name: '' })
       
-    } catch (err) {
+    } catch {
       setError('Erro ao adicionar cartão. Tente novamente.')
     } finally {
       setIsLoading(false)

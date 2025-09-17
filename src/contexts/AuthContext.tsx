@@ -88,7 +88,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           const userData = JSON.parse(savedUser)
           setUser(userData)
         }
-      } catch (error) {
+      } catch {
         console.error('Erro ao verificar autenticação:', error)
         localStorage.removeItem('auth_user')
       } finally {

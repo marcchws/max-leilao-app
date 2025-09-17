@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Shield, AlertTriangle, ArrowLeft } from 'lucide-react'
@@ -14,7 +13,7 @@ interface AdminAccessControlProps {
 export function AdminAccessControl({ children }: AdminAccessControlProps) {
   const [isAuthorized, setIsAuthorized] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
+
 
   useEffect(() => {
     // Simular verificação de acesso administrativo

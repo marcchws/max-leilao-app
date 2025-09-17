@@ -7,15 +7,15 @@ import { CreateAlertDialog } from '@/components/features/alerts/CreateAlertDialo
 import { WhatsAppNotification, useWhatsAppNotifications } from '@/components/features/alerts/WhatsAppNotification'
 import { AccessControl } from '@/hooks/useAccessControl'
 import { TrialExpirationNotification } from '@/components/features/subscription/TrialExpirationNotification'
-import { mockAlerts, mockVehicles } from '@/lib/mock-data'
+import { mockAlerts } from '@/lib/mock-data'
 import { Alert, VehicleFilters } from '@/lib/types'
 import { useSubscription } from '@/contexts/SubscriptionContext'
-import { Plus, Bell, Zap } from 'lucide-react'
+import { Plus } from 'lucide-react'
 
 export default function AlertsPage() {
   const [alerts, setAlerts] = useState<Alert[]>(mockAlerts)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-  const { notifications, simulateNotification, dismissNotification } = useWhatsAppNotifications()
+  const { notifications, dismissNotification } = useWhatsAppNotifications()
   const { user, getDaysUntilExpiry } = useSubscription()
 
   const handleToggleActive = (alertId: string) => {
@@ -52,19 +52,6 @@ export default function AlertsPage() {
     console.log('Created new alert:', newAlert)
   }
 
-  const activeAlertsCount = alerts.filter(alert => alert.isActive).length
-
-  const simulateWhatsAppNotification = () => {
-    const activeAlert = alerts.find(alert => alert.isActive)
-    if (activeAlert) {
-      const randomVehicle = mockVehicles[Math.floor(Math.random() * mockVehicles.length)]
-      simulateNotification(
-        activeAlert,
-        randomVehicle.title,
-        randomVehicle.originalUrl
-      )
-    }
-  }
 
   return (
     <div className="space-y-6">

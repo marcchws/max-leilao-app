@@ -11,8 +11,8 @@ import {
   CheckCircle, 
   AlertTriangle, 
   User, 
-  Calendar,
-  MessageSquare,
+
+
   Shield
 } from 'lucide-react'
 
@@ -117,26 +117,6 @@ export function UserActionsDialog({
       hour: '2-digit',
       minute: '2-digit'
     })
-  }
-
-  const getDaysUntilExpiry = () => {
-    if (user.subscriptionStatus === 'trial' && user.trialEndDate) {
-      const trialEnd = new Date(user.trialEndDate)
-      const now = new Date()
-      const diffTime = trialEnd.getTime() - now.getTime()
-      const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-      return days > 0 ? days : 0
-    }
-    
-    if (user.subscription?.currentPeriodEnd) {
-      const periodEnd = new Date(user.subscription.currentPeriodEnd)
-      const now = new Date()
-      const diffTime = periodEnd.getTime() - now.getTime()
-      const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-      return days > 0 ? days : 0
-    }
-    
-    return null
   }
 
   const renderActionForm = () => {

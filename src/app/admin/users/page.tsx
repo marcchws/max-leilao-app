@@ -61,7 +61,7 @@ export default function AdminUsersPage() {
   }
 
   // Handlers para ações
-  const handleUserAction = (userId: string, action: string, data?: Record<string, unknown>) => {
+  const handleUserAction = (userId: string, action: string) => {
     const user = users.find(u => u.id === userId)
     if (!user) return
 

@@ -5,15 +5,13 @@ import { AdminNotification } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { 
-  AlertTriangle, 
-  CreditCard, 
-  UserX, 
+import {
+  AlertTriangle,
+  UserX,
   Bell,
   CheckCircle,
   X,
-  Eye,
-  EyeOff
+  Eye
 } from 'lucide-react'
 
 interface AdminNotificationCardProps {
