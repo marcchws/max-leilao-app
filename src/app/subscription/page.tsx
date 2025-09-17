@@ -1,6 +1,16 @@
 'use client'
 
 import React, { useState } from 'react'
+
+interface PaymentFormData {
+  cardNumber: string
+  expiryDate: string
+  cvv: string
+  cardholderName: string
+  cpf: string
+  email: string
+  phone: string
+}
 import { useSubscription } from '@/contexts/SubscriptionContext'
 import { PricingGrid } from '@/components/features/subscription/PricingCard'
 import { CheckoutForm } from '@/components/features/subscription/CheckoutForm'
@@ -13,8 +23,7 @@ import {
   Shield, 
   Zap, 
   Users, 
-  Headphones,
-  ArrowLeft
+  Headphones
 } from 'lucide-react'
 
 export default function PricingPage() {
@@ -22,8 +31,7 @@ export default function PricingPage() {
     subscriptionPlans, 
     user, 
     subscription, 
-    isLoading, 
-    getDaysUntilExpiry 
+    isLoading 
   } = useSubscription()
   
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
@@ -35,7 +43,7 @@ export default function PricingPage() {
     setShowCheckout(true)
   }
 
-  const handleCheckout = async (paymentData: any) => {
+  const handleCheckout = async (paymentData: PaymentFormData) => {
     try {
       setIsProcessing(true)
       // Simular processamento do pagamento

@@ -13,7 +13,6 @@ import {
   Settings, 
   Download, 
   Bell,
-  ArrowLeft,
   Calendar,
   DollarSign,
   Home
@@ -26,9 +25,7 @@ export default function AccountPage() {
     subscriptionPlans, 
     paymentHistory, 
     isLoading,
-    getDaysUntilExpiry,
-    cancelSubscription,
-    refreshSubscription
+    cancelSubscription
   } = useSubscription()
   
   const [isCanceling, setIsCanceling] = useState(false)

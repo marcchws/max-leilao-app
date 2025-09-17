@@ -51,14 +51,14 @@ export default function VehiclesPage() {
     // Filtro por estado
     if (filters.state) {
       filtered = filtered.filter(vehicle =>
-        vehicle.location.state.toLowerCase().includes(filters.state.toLowerCase())
+        vehicle.location.state.toLowerCase().includes(filters.state!.toLowerCase())
       )
     }
 
     // Filtro por cidade
     if (filters.city) {
       filtered = filtered.filter(vehicle =>
-        vehicle.location.city.toLowerCase().includes(filters.city.toLowerCase())
+        vehicle.location.city.toLowerCase().includes(filters.city!.toLowerCase())
       )
     }
 

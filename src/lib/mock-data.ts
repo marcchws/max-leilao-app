@@ -8,9 +8,8 @@ export const mockVehicles: Vehicle[] = [
     brand: 'Honda',
     model: 'Civic',
     year: 2018,
-    modelYear: 2019,
     currentBid: 45000,
-    auctionDate: new Date('2025-01-25T14:00:00'),
+    auctionDate: '2025-01-25T14:00:00',
     location: {
       city: 'São Paulo',
       state: 'SP'
@@ -30,9 +29,8 @@ export const mockVehicles: Vehicle[] = [
     brand: 'Toyota',
     model: 'Corolla Cross',
     year: 2022,
-    modelYear: 2023,
     currentBid: 78000,
-    auctionDate: new Date('2025-01-26T15:30:00'),
+    auctionDate: '2025-01-26T15:30:00',
     location: {
       city: 'Campinas',
       state: 'SP'
@@ -52,9 +50,8 @@ export const mockVehicles: Vehicle[] = [
     brand: 'Volkswagen',
     model: 'Gol',
     year: 2014,
-    modelYear: 2015,
     currentBid: 18500,
-    auctionDate: new Date('2025-01-27T10:00:00'),
+    auctionDate: '2025-01-27T10:00:00',
     location: {
       city: 'Santos',
       state: 'SP'
@@ -74,9 +71,8 @@ export const mockVehicles: Vehicle[] = [
     brand: 'Honda',
     model: 'CB 600F Hornet',
     year: 2012,
-    modelYear: 2013,
     currentBid: 25000,
-    auctionDate: new Date('2025-01-28T16:00:00'),
+    auctionDate: '2025-01-28T16:00:00',
     location: {
       city: 'Ribeirão Preto',
       state: 'SP'
@@ -96,9 +92,8 @@ export const mockVehicles: Vehicle[] = [
     brand: 'Ford',
     model: 'Cargo 816',
     year: 2015,
-    modelYear: 2016,
     currentBid: 95000,
-    auctionDate: new Date('2025-01-29T11:30:00'),
+    auctionDate: '2025-01-29T11:30:00',
     location: {
       city: 'Guarulhos',
       state: 'SP'
@@ -118,9 +113,8 @@ export const mockVehicles: Vehicle[] = [
     brand: 'Chevrolet',
     model: 'Onix',
     year: 2020,
-    modelYear: 2021,
     currentBid: 52000,
-    auctionDate: new Date('2025-01-30T14:30:00'),
+    auctionDate: '2025-01-30T14:30:00',
     location: {
       city: 'Sorocaba',
       state: 'SP'

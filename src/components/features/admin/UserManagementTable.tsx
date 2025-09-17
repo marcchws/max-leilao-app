@@ -23,7 +23,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 interface UserManagementTableProps {
   users: AdminUser[]
-  onUserAction: (userId: string, action: string, data?: any) => void
+  onUserAction: (userId: string, action: string, data?: Record<string, unknown>) => void
   onCreateUser: () => void
   isLoading?: boolean
 }

@@ -7,21 +7,17 @@ import { UserManagementTable } from '@/components/features/admin/UserManagementT
 import { UserActionsDialog } from '@/components/features/admin/UserActionsDialog'
 import { AddUserDialog } from '@/components/features/admin/AddUserDialog'
 import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { 
   Users, 
   UserCheck, 
-  UserX, 
   Clock, 
-  AlertTriangle,
-  CheckCircle,
-  TrendingUp
+  AlertTriangle
 } from 'lucide-react'
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUser[]>([])
-  const [userActions, setUserActions] = useState<UserManagementAction[]>([])
+  const [, setUserActions] = useState<UserManagementAction[]>([])
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null)
   const [selectedAction, setSelectedAction] = useState<string>('')
   const [isActionDialogOpen, setIsActionDialogOpen] = useState(false)
@@ -65,7 +61,7 @@ export default function AdminUsersPage() {
   }
 
   // Handlers para ações
-  const handleUserAction = (userId: string, action: string, data?: any) => {
+  const handleUserAction = (userId: string, action: string, data?: Record<string, unknown>) => {
     const user = users.find(u => u.id === userId)
     if (!user) return
 
@@ -74,20 +70,20 @@ export default function AdminUsersPage() {
     setIsActionDialogOpen(true)
   }
 
-  const handleConfirmAction = async (action: string, data: any) => {
+  const handleConfirmAction = async (action: string, data: Record<string, unknown>) => {
     if (!selectedUser) return
 
     try {
       // Simular chamada à API
       await new Promise(resolve => setTimeout(resolve, 1000))
 
-      let updatedUser = { ...selectedUser }
+      const updatedUser = { ...selectedUser }
       let newAction: UserManagementAction | null = null
 
       switch (action) {
         case 'extend_trial':
           if (data.duration) {
-            const days = parseInt(data.duration)
+            const days = parseInt(data.duration as string)
             const newTrialEnd = new Date()
             newTrialEnd.setDate(newTrialEnd.getDate() + days)
             
@@ -101,7 +97,7 @@ export default function AdminUsersPage() {
               type: 'extend_trial',
               description: `Trial estendido por ${days} dias`,
               duration: days * 24,
-              reason: data.reason || 'Extensão administrativa',
+              reason: (data.reason as string) || 'Extensão administrativa',
               performedBy: 'Vitor (Admin)',
               performedAt: new Date().toISOString(),
               expiresAt: newTrialEnd.toISOString()
@@ -111,7 +107,7 @@ export default function AdminUsersPage() {
 
         case 'grant_access':
           if (data.duration) {
-            const hours = parseInt(data.duration)
+            const hours = parseInt(data.duration as string)
             const expiresAt = new Date()
             expiresAt.setHours(expiresAt.getHours() + hours)
             
@@ -124,7 +120,7 @@ export default function AdminUsersPage() {
               type: 'grant_access',
               description: `Acesso temporário concedido por ${hours} horas`,
               duration: hours,
-              reason: data.reason || 'Acesso administrativo',
+              reason: (data.reason as string) || 'Acesso administrativo',
               performedBy: 'Vitor (Admin)',
               performedAt: new Date().toISOString(),
               expiresAt: expiresAt.toISOString()
@@ -141,7 +137,7 @@ export default function AdminUsersPage() {
             userId: selectedUser.id,
             type: 'suspend_user',
             description: 'Usuário suspenso',
-            reason: data.reason || 'Suspensão administrativa',
+            reason: (data.reason as string) || 'Suspensão administrativa',
             performedBy: 'Vitor (Admin)',
             performedAt: new Date().toISOString()
           }
@@ -158,7 +154,7 @@ export default function AdminUsersPage() {
             userId: selectedUser.id,
             type: 'activate_user',
             description: 'Usuário ativado',
-            reason: data.reason || 'Ativação administrativa',
+            reason: (data.reason as string) || 'Ativação administrativa',
             performedBy: 'Vitor (Admin)',
             performedAt: new Date().toISOString()
           }

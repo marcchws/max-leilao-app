@@ -104,8 +104,7 @@ export function AddUserDialog({ isOpen, onClose, onCreateUser }: AddUserDialogPr
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Ex: João Silva"
-                className="pl-10"
-                error={errors.name}
+                className={`pl-10 ${errors.name ? 'border-red-500' : ''}`}
               />
             </div>
             {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
@@ -123,8 +122,7 @@ export function AddUserDialog({ isOpen, onClose, onCreateUser }: AddUserDialogPr
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="Ex: joao@email.com"
-                className="pl-10"
-                error={errors.email}
+                className={`pl-10 ${errors.email ? 'border-red-500' : ''}`}
               />
             </div>
             {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
@@ -141,8 +139,7 @@ export function AddUserDialog({ isOpen, onClose, onCreateUser }: AddUserDialogPr
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 placeholder="Ex: +5511999999999"
-                className="pl-10"
-                error={errors.phone}
+                className={`pl-10 ${errors.phone ? 'border-red-500' : ''}`}
               />
             </div>
             {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
@@ -181,8 +178,7 @@ export function AddUserDialog({ isOpen, onClose, onCreateUser }: AddUserDialogPr
                   max="30"
                   value={formData.trialDays}
                   onChange={(e) => setFormData({ ...formData, trialDays: parseInt(e.target.value) || 7 })}
-                  className="pl-10"
-                  error={errors.trialDays}
+                  className={`pl-10 ${errors.trialDays ? 'border-red-500' : ''}`}
                 />
               </div>
               {errors.trialDays && <p className="text-red-500 text-xs mt-1">{errors.trialDays}</p>}

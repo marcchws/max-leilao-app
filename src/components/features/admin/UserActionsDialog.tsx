@@ -21,7 +21,7 @@ interface UserActionsDialogProps {
   onClose: () => void
   user: AdminUser | null
   action: string
-  onConfirm: (action: string, data: any) => void
+  onConfirm: (action: string, data: Record<string, unknown>) => void
 }
 
 export function UserActionsDialog({ 

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { SubscriptionPlan, PaymentMethod } from '@/lib/types'
+import { SubscriptionPlan } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
