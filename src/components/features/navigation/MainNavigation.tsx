@@ -68,11 +68,12 @@ export function MainNavigation() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="bg-blue-600 text-white p-2 rounded-lg">
-              <Car className="h-6 w-6" />
-            </div>
-            <span className="text-xl font-bold">Max Leilão</span>
+          <Link href="/" className="flex items-center">
+            <img 
+              src="/logo.svg" 
+              alt="Max Leilão" 
+              className="h-8 w-auto"
+            />
           </Link>
 
           {/* Navigation Menu */}

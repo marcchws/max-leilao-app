@@ -29,7 +29,8 @@ export function VehicleCard({ vehicle, onFavoriteToggle, isFavorited = false }: 
 
   const handleFavoriteClick = () => {
     if (!canUseFavorites) {
-      // Redireciona para página de assinatura se não tem acesso
+      // Mostra alerta específico para favoritos
+      alert('⭐ Lista de Favoritos é Premium!\n\nSalve veículos de interesse e acompanhe lances em tempo real.\n\nExperimente 7 dias grátis!')
       window.location.href = '/subscription'
       return
     }
@@ -53,7 +54,7 @@ export function VehicleCard({ vehicle, onFavoriteToggle, isFavorited = false }: 
           className={`absolute top-2 right-2 p-2 bg-white/80 hover:bg-white rounded-full transition-colors ${
             !canUseFavorites ? 'cursor-pointer' : ''
           }`}
-          title={!canUseFavorites ? 'Favoritar é exclusivo para assinantes' : ''}
+          title={!canUseFavorites ? 'Lista de Favoritos - Funcionalidade Premium (clique para saber mais)' : ''}
         >
           {canUseFavorites ? (
             <Heart

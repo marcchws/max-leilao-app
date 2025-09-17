@@ -5,12 +5,9 @@ import { AdminNotificationsPanel } from '@/components/features/admin/AdminNotifi
 import { DashboardMetricsComponent } from '@/components/features/admin/DashboardMetrics'
 import { RankingLeiloeiros } from '@/components/features/admin/RankingLeiloeiros'
 import { AdminNotification } from '@/lib/types'
-import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { 
-  AlertTriangle,
-  BarChart3,
-  TrendingUp
+import {
+  AlertTriangle
 } from 'lucide-react'
 
 export default function AdminDashboard() {
@@ -120,30 +117,8 @@ export default function AdminDashboard() {
         onDismissAll={handleDismissAll}
       />
 
-      {/* Ranking de Leiloeiros */}
+      {/* Ranking de Leiloeiros - RF-010 */}
       <RankingLeiloeiros />
-
-      {/* Gráficos Adicionais */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <BarChart3 className="h-5 w-5 text-gray-600" />
-            <h3 className="font-semibold">Crescimento de Usuários</h3>
-          </div>
-          <div className="text-sm text-gray-500">
-            Gráfico de crescimento será implementado aqui
-          </div>
-        </Card>
-        <Card className="p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="h-5 w-5 text-gray-600" />
-            <h3 className="font-semibold">Receita por Período</h3>
-          </div>
-          <div className="text-sm text-gray-500">
-            Gráfico de receita será implementado aqui
-          </div>
-        </Card>
-      </div>
     </div>
   )
 }

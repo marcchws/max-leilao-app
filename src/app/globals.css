@@ -4,6 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --breakpoint-3xl: 2560px;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -180,5 +181,16 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /* Ultrawide layout optimizations */
+  @media (min-width: 2560px) {
+    .ultrawide-container {
+      max-width: 2000px !important;
+    }
+
+    .ultrawide-grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    }
   }
 }

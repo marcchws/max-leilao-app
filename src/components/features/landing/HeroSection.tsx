@@ -1,6 +1,7 @@
 'use client'
 
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { useAuth } from '@/contexts/AuthContext'
 import { useState } from 'react'
@@ -32,9 +33,16 @@ export function HeroSection() {
         <div className="text-center max-w-5xl mx-auto">
           {/* Logo/Brand */}
           <div className="mb-8">
-            <h1 className="text-6xl md:text-7xl font-bold text-gray-900 dark:text-white mb-4">
-              Max <span className="text-blue-600">Leilão</span>
-            </h1>
+            <div className="flex justify-center mb-4">
+              <Image 
+                src="/logo.svg" 
+                alt="Max Leilão" 
+                width={128}
+                height={128}
+                className="h-24 md:h-32 w-auto"
+                priority
+              />
+            </div>
             <div className="w-24 h-1 bg-blue-600 mx-auto rounded-full"></div>
           </div>
 

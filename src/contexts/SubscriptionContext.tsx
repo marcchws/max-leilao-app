@@ -42,7 +42,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
   const [subscriptionPlans, setSubscriptionPlans] = useState<SubscriptionPlan[]>([])
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([])
   const [paymentHistory, setPaymentHistory] = useState<PaymentHistory[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   // Mock data - substituir por chamadas reais da API
@@ -50,6 +50,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
     const loadInitialData = async () => {
       try {
         setIsLoading(true)
+        console.log('Loading subscription data for user:', authUser)
         
         // Mock subscription plans
         const mockPlans: SubscriptionPlan[] = [
@@ -109,8 +110,64 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
         
         setSubscriptionPlans(mockPlans)
         
-        // Simular carregamento
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        // Mock subscription para usuários ativos
+        if (authUser?.subscriptionStatus === 'active') {
+          const mockSubscription: Subscription = {
+            id: 'sub-1',
+            userId: authUser.id,
+            planId: 'premium',
+            status: 'active',
+            currentPeriodStart: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+            currentPeriodEnd: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
+            cancelAtPeriodEnd: false,
+            gatewaySubscriptionId: 'sub_stripe_123',
+            createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+            updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+          }
+          console.log('Setting subscription for active user:', mockSubscription)
+          setSubscription(mockSubscription)
+        } else {
+          console.log('User subscription status:', authUser?.subscriptionStatus)
+          setSubscription(null)
+        }
+        
+        // Mock payment history
+        const mockPaymentHistory: PaymentHistory[] = [
+          {
+            id: 'pay-1',
+            userId: authUser?.id || 'user-1',
+            amount: 49.90,
+            currency: 'BRL',
+            status: 'succeeded',
+            description: 'Assinatura Premium - Janeiro 2025',
+            gatewayPaymentId: 'pi_stripe_123',
+            createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString()
+          },
+          {
+            id: 'pay-2',
+            userId: authUser?.id || 'user-1',
+            amount: 49.90,
+            currency: 'BRL',
+            status: 'succeeded',
+            description: 'Assinatura Premium - Dezembro 2024',
+            gatewayPaymentId: 'pi_stripe_456',
+            createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString()
+          },
+          {
+            id: 'pay-3',
+            userId: authUser?.id || 'user-1',
+            amount: 49.90,
+            currency: 'BRL',
+            status: 'succeeded',
+            description: 'Assinatura Premium - Novembro 2024',
+            gatewayPaymentId: 'pi_stripe_789',
+            createdAt: new Date(Date.now() - 75 * 24 * 60 * 60 * 1000).toISOString()
+          }
+        ]
+        setPaymentHistory(mockPaymentHistory)
+        
+        // Carregamento concluído
+        console.log('Subscription data loaded successfully')
         
       } catch (err) {
         setError('Erro ao carregar dados da assinatura')
@@ -121,7 +178,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
     }
 
     loadInitialData()
-  }, [])
+  }, [authUser])
 
   const updateUser = (newUser: User) => {
     // Não precisamos mais gerenciar usuário aqui, pois vem do AuthContext

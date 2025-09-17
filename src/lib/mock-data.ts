@@ -14,13 +14,13 @@ export const mockVehicles: Vehicle[] = [
       city: 'São Paulo',
       state: 'SP'
     },
-    auctioneerName: 'Leilões Zukerman',
-    auctioneerLogo: '/logos/zukerman.png',
+    auctioneerName: 'Freitas Leiloeiro',
+    auctioneerLogo: '/freitas-leiloeiro.png',
     images: [
-      '/vehicles/civic-1.jpg',
-      '/vehicles/civic-2.jpg'
+      '/honda-civic-20186-732x488.jpg',
+      '/placeholder-car.jpg'
     ],
-    originalUrl: 'https://www.leiloeszukerman.com.br/veiculo/honda-civic-2018-2019-lx-cvt'
+    originalUrl: 'https://www.freitasleiloeiro.com.br'
   },
   {
     id: '2',
@@ -36,12 +36,12 @@ export const mockVehicles: Vehicle[] = [
       state: 'SP'
     },
     auctioneerName: 'Sodré Santoro',
-    auctioneerLogo: '/logos/sodre-santoro.png',
+    auctioneerLogo: '/logo_sodre-santoro-leiloes_oIOUa0.png',
     images: [
-      '/vehicles/corolla-cross-1.jpg',
-      '/vehicles/corolla-cross-2.jpg'
+      '/Toyota-Corolla-Cross-2023-01.jpg',
+      '/placeholder-car.jpg'
     ],
-    originalUrl: 'https://www.sodresantoro.com.br/leilao/toyota-corolla-cross-2022-2023'
+    originalUrl: 'https://www.sodresantoro.com.br'
   },
   {
     id: '3',
@@ -56,13 +56,13 @@ export const mockVehicles: Vehicle[] = [
       city: 'Santos',
       state: 'SP'
     },
-    auctioneerName: 'F1 Leilões',
-    auctioneerLogo: '/logos/f1-leiloes.png',
+    auctioneerName: 'Copart',
+    auctioneerLogo: '/Copart_logo.svg',
     images: [
-      '/vehicles/gol-1.jpg',
-      '/vehicles/gol-2.jpg'
+      '/Volkswagen-Gol-20142015.png',
+      '/placeholder-car.jpg'
     ],
-    originalUrl: 'https://www.f1leiloes.com.br/veiculo/volkswagen-gol-2014-2015'
+    originalUrl: 'https://www.copart.com.br'
   },
   {
     id: '4',
@@ -77,13 +77,13 @@ export const mockVehicles: Vehicle[] = [
       city: 'Ribeirão Preto',
       state: 'SP'
     },
-    auctioneerName: 'Lance Certo',
-    auctioneerLogo: '/logos/lance-certo.png',
+    auctioneerName: 'VIP Leilões',
+    auctioneerLogo: '/logo_vip-leiloes_z2KHJd.png',
     images: [
-      '/vehicles/hornet-1.jpg',
-      '/vehicles/hornet-2.jpg'
+      '/C45F6279.jpg',
+      '/placeholder-car.jpg'
     ],
-    originalUrl: 'https://www.lancecerto.com.br/moto/honda-cb600f-hornet-2012'
+    originalUrl: 'https://www.vipleiloes.com.br'
   },
   {
     id: '5',
@@ -98,13 +98,13 @@ export const mockVehicles: Vehicle[] = [
       city: 'Guarulhos',
       state: 'SP'
     },
-    auctioneerName: 'Mega Leilões',
-    auctioneerLogo: '/logos/mega-leiloes.png',
+    auctioneerName: 'Freitas Leiloeiro',
+    auctioneerLogo: '/freitas-leiloeiro.png',
     images: [
-      '/vehicles/cargo-1.jpg',
-      '/vehicles/cargo-2.jpg'
+      '/619513070857048.png',
+      '/placeholder-car.jpg'
     ],
-    originalUrl: 'https://www.megaleiloes.com.br/caminhao/ford-cargo-816-2015'
+    originalUrl: 'https://www.freitasleiloeiro.com.br'
   },
   {
     id: '6',
@@ -119,13 +119,13 @@ export const mockVehicles: Vehicle[] = [
       city: 'Sorocaba',
       state: 'SP'
     },
-    auctioneerName: 'Leilões Brasil',
-    auctioneerLogo: '/logos/leiloes-brasil.png',
+    auctioneerName: 'Copart',
+    auctioneerLogo: '/Copart_logo.svg',
     images: [
-      '/vehicles/onix-1.jpg',
-      '/vehicles/onix-2.jpg'
+      '/Chevrolet-Onix-20202021.png',
+      '/placeholder-car.jpg'
     ],
-    originalUrl: 'https://www.leiloesbrasil.com.br/veiculo/chevrolet-onix-2020-2021'
+    originalUrl: 'https://www.copart.com.br'
   }
 ]
 

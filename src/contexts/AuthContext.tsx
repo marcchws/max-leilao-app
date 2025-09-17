@@ -22,6 +22,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
   logout: () => void
   register: (userData: RegisterData) => Promise<{ success: boolean; error?: string }>
+  updateUserSubscription: (subscriptionStatus: User['subscriptionStatus']) => void
+  updateUserInfo: (userData: { name: string; email: string; phone?: string }) => Promise<void>
 }
 
 interface RegisterData {
@@ -125,6 +127,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(updatedUser)
       localStorage.setItem('auth_user', JSON.stringify(updatedUser))
       
+      // Verificar se há redirecionamento pendente
+      const redirectAfterLogin = localStorage.getItem('redirect_after_login')
+      if (redirectAfterLogin) {
+        localStorage.removeItem('redirect_after_login')
+        router.push(redirectAfterLogin)
+      }
+      
       return { success: true }
     } catch (error) {
       return { success: false, error: 'Erro interno do servidor' }
@@ -165,6 +174,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(newUser)
       localStorage.setItem('auth_user', JSON.stringify(newUser))
       
+      // Verificar se há redirecionamento pendente
+      const redirectAfterLogin = localStorage.getItem('redirect_after_login')
+      if (redirectAfterLogin) {
+        localStorage.removeItem('redirect_after_login')
+        router.push(redirectAfterLogin)
+      }
+      
       return { success: true }
     } catch (error) {
       return { success: false, error: 'Erro interno do servidor' }
@@ -179,13 +195,67 @@ export function AuthProvider({ children }: AuthProviderProps) {
     router.push('/')
   }
 
+  const updateUserSubscription = (subscriptionStatus: User['subscriptionStatus']) => {
+    if (user) {
+      const updatedUser = {
+        ...user,
+        subscriptionStatus
+      }
+      setUser(updatedUser)
+      localStorage.setItem('auth_user', JSON.stringify(updatedUser))
+    }
+  }
+
+  const updateUserInfo = async (userData: { name: string; email: string; phone?: string }) => {
+    if (!user) {
+      throw new Error('Usuário não encontrado')
+    }
+
+    try {
+      setIsLoading(true)
+      
+      // Simular delay de API
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      // Atualizar usuário no mock database
+      const userIndex = mockUsers.findIndex(u => u.id === user.id)
+      if (userIndex !== -1) {
+        mockUsers[userIndex] = {
+          ...mockUsers[userIndex],
+          name: userData.name,
+          email: userData.email,
+          phone: userData.phone
+        }
+      }
+      
+      // Atualizar usuário no estado
+      const updatedUser = {
+        ...user,
+        name: userData.name,
+        email: userData.email,
+        phone: userData.phone
+      }
+      
+      setUser(updatedUser)
+      localStorage.setItem('auth_user', JSON.stringify(updatedUser))
+      
+    } catch (error) {
+      console.error('Erro ao atualizar usuário:', error)
+      throw error
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const value: AuthContextType = {
     user,
     isLoading,
     isAuthenticated: !!user,
     login,
     logout,
-    register
+    register,
+    updateUserSubscription,
+    updateUserInfo
   }
 
   return (

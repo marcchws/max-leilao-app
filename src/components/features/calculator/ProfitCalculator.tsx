@@ -3,78 +3,47 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { CalculatorSimulation, MaintenanceItem, CalculatorResult } from '@/lib/types'
-import { Plus, Trash2, Calculator, Save } from 'lucide-react'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { useCalculator } from '@/contexts/CalculatorContext'
+import { Calculator, Plus, Minus, Trash2 } from 'lucide-react'
 
-interface ProfitCalculatorProps {
-  simulation?: CalculatorSimulation
-  onSave?: (simulation: Partial<CalculatorSimulation>) => void
-  className?: string
-}
+export function ProfitCalculator() {
+  const {
+    simulations,
+    currentSimulation,
+    createSimulation,
+    updateSimulation,
+    deleteSimulation,
+    selectSimulation,
+    addMaintenanceItem,
+    updateMaintenanceItem,
+    removeMaintenanceItem,
+    calculateResults
+  } = useCalculator()
 
-export function ProfitCalculator({ simulation, onSave, className }: ProfitCalculatorProps) {
-  const [name, setName] = useState(simulation?.name || '')
-  const [purchasePrice, setPurchasePrice] = useState(simulation?.purchasePrice || 0)
-  const [commissionPercent, setCommissionPercent] = useState(simulation?.auctioneerCommissionPercent || 5)
-  const [maintenanceItems, setMaintenanceItems] = useState<MaintenanceItem[]>(
-    simulation?.maintenanceItems || []
-  )
-  const [estimatedSalePrice, setEstimatedSalePrice] = useState(simulation?.estimatedSalePrice || 0)
-
-  const addMaintenanceItem = () => {
-    const newItem: MaintenanceItem = {
-      id: Date.now().toString(),
-      description: '',
-      cost: 0
-    }
-    setMaintenanceItems([...maintenanceItems, newItem])
-  }
-
-  const updateMaintenanceItem = (id: string, field: 'description' | 'cost', value: string | number) => {
-    setMaintenanceItems(items =>
-      items.map(item =>
-        item.id === id ? { ...item, [field]: value } : item
-      )
-    )
-  }
-
-  const removeMaintenanceItem = (id: string) => {
-    setMaintenanceItems(items => items.filter(item => item.id !== id))
-  }
-
-  const calculateResults = (): CalculatorResult => {
-    const totalMaintenanceCost = maintenanceItems.reduce((sum, item) => sum + item.cost, 0)
-    const commissionCost = purchasePrice * (commissionPercent / 100)
-    const totalVehicleCost = purchasePrice + commissionCost + totalMaintenanceCost
-    const profitMargin = estimatedSalePrice - totalVehicleCost
-    const profitPercentage = estimatedSalePrice > 0 ? (profitMargin / estimatedSalePrice) * 100 : 0
-
-    return {
-      totalMaintenanceCost,
-      totalVehicleCost,
-      profitMargin,
-      profitPercentage
-    }
-  }
+  const [showNewForm, setShowNewForm] = useState(!currentSimulation)
+  const [newSimulationName, setNewSimulationName] = useState('')
+  const [newMaintenanceDescription, setNewMaintenanceDescription] = useState('')
+  const [newMaintenanceCost, setNewMaintenanceCost] = useState('')
 
   const results = calculateResults()
 
-  const handleSave = () => {
-    if (!name.trim()) {
-      alert('Por favor, digite um nome para a simulação')
-      return
+  const handleCreateSimulation = () => {
+    if (newSimulationName.trim()) {
+      createSimulation(newSimulationName.trim())
+      setNewSimulationName('')
+      setShowNewForm(false)
     }
+  }
 
-    const simulationData: Partial<CalculatorSimulation> = {
-      name: name.trim(),
-      purchasePrice,
-      auctioneerCommissionPercent: commissionPercent,
-      maintenanceItems,
-      estimatedSalePrice
+  const handleAddMaintenanceItem = () => {
+    if (newMaintenanceDescription.trim() && newMaintenanceCost) {
+      addMaintenanceItem(newMaintenanceDescription.trim(), parseFloat(newMaintenanceCost))
+      setNewMaintenanceDescription('')
+      setNewMaintenanceCost('')
     }
-
-    onSave?.(simulationData)
   }
 
   const formatCurrency = (value: number) => {
@@ -84,147 +53,331 @@ export function ProfitCalculator({ simulation, onSave, className }: ProfitCalcul
     }).format(value)
   }
 
+  const getProfitColor = (profit: number) => {
+    return profit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+  }
+
   return (
-    <div className={`bg-card rounded-lg border p-6 ${className}`}>
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-2">
-          <Calculator className="h-5 w-5" />
-          <h3 className="text-lg font-semibold">Calculadora de Lucro</h3>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div>
+          <p className="text-gray-600 dark:text-gray-400">
+            Simule os custos e estime sua margem de lucro em leilões
+          </p>
         </div>
 
-        <Button onClick={handleSave} size="sm">
-          <Save className="h-4 w-4 mr-2" />
-          Salvar
-        </Button>
+        <div className="flex items-center gap-4">
+          <Button
+            onClick={() => setShowNewForm(true)}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Nova Simulação
+          </Button>
+        </div>
       </div>
 
-      <div className="space-y-6">
-        {/* Simulation Name */}
-        <div>
-          <label className="text-sm font-medium mb-2 block">Nome da Simulação</label>
-          <Input
-            placeholder="Ex: Honda Civic Azul 2019"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
+      {/* Nova Simulação Form */}
+      {showNewForm && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Nova Simulação</CardTitle>
+            <CardDescription>
+              Crie uma nova simulação para calcular a margem de lucro
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="simulation-name">Nome da Simulação</Label>
+              <Input
+                id="simulation-name"
+                placeholder="Ex: Honda Civic Azul 2019"
+                value={newSimulationName}
+                onChange={(e) => setNewSimulationName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleCreateSimulation()}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={handleCreateSimulation} disabled={!newSimulationName.trim()}>
+                Criar Simulação
+              </Button>
+              <Button variant="outline" onClick={() => setShowNewForm(false)}>
+                Cancelar
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-        {/* Purchase Price */}
-        <div>
-          <label className="text-sm font-medium mb-2 block">Valor da Compra / Lance (R$)</label>
-          <Input
-            type="number"
-            value={purchasePrice || ''}
-            onChange={(e) => setPurchasePrice(Number(e.target.value) || 0)}
-          />
-        </div>
-
-        {/* Commission */}
-        <div>
-          <label className="text-sm font-medium mb-2 block">Comissão do Leiloeiro (%)</label>
-          <Input
-            type="number"
-            step="0.1"
-            value={commissionPercent || ''}
-            onChange={(e) => setCommissionPercent(Number(e.target.value) || 0)}
-          />
-        </div>
-
-        {/* Maintenance Items */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <label className="text-sm font-medium">Custos de Manutenção</label>
-            <Button onClick={addMaintenanceItem} variant="outline" size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              Adicionar Item
-            </Button>
-          </div>
-
-          <div className="space-y-2">
-            {maintenanceItems.map((item) => (
-              <div key={item.id} className="flex gap-2">
-                <Input
-                  placeholder="Descrição (Ex: Troca de pneus)"
-                  value={item.description}
-                  onChange={(e) => updateMaintenanceItem(item.id, 'description', e.target.value)}
-                  className="flex-1"
-                />
-                <Input
-                  type="number"
-                  placeholder="Valor (R$)"
-                  value={item.cost || ''}
-                  onChange={(e) => updateMaintenanceItem(item.id, 'cost', Number(e.target.value) || 0)}
-                  className="w-32"
-                />
-                <Button
-                  onClick={() => removeMaintenanceItem(item.id)}
-                  variant="outline"
-                  size="sm"
+      {/* Simulações Existentes */}
+      {simulations.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Simulações Salvas</CardTitle>
+            <CardDescription>
+              Selecione uma simulação para editar ou criar uma nova
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {simulations.map((simulation) => (
+                <div
+                  key={simulation.id}
+                  className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                    currentSimulation?.id === simulation.id
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
+                  onClick={() => selectSimulation(simulation.id)}
                 >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="font-medium text-gray-900 dark:text-white">
+                        {simulation.name}
+                      </h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        Criado em {new Date(simulation.createdAt).toLocaleDateString('pt-BR')}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        deleteSimulation(simulation.id)
+                      }}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Formulário da Calculadora */}
+      {currentSimulation && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Formulário de Entrada */}
+          <div className="space-y-6">
+            {/* Dados Básicos */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calculator className="h-5 w-5" />
+                  {currentSimulation.name}
+                </CardTitle>
+                <CardDescription>
+                  Preencha os dados para calcular a margem de lucro
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="purchase-price">Valor da Compra / Lance (R$)</Label>
+                  <Input
+                    id="purchase-price"
+                    type="number"
+                    placeholder="0,00"
+                    value={currentSimulation.purchasePrice || ''}
+                    onChange={(e) => updateSimulation({ purchasePrice: parseFloat(e.target.value) || 0 })}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="commission">Comissão do Leiloeiro (%)</Label>
+                  <Input
+                    id="commission"
+                    type="number"
+                    step="0.1"
+                    placeholder="5,0"
+                    value={currentSimulation.auctioneerCommissionPercent || ''}
+                    onChange={(e) => updateSimulation({ auctioneerCommissionPercent: parseFloat(e.target.value) || 0 })}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="sale-price">Preço de Venda Estimado (R$)</Label>
+                  <Input
+                    id="sale-price"
+                    type="number"
+                    placeholder="0,00"
+                    value={currentSimulation.estimatedSalePrice || ''}
+                    onChange={(e) => updateSimulation({ estimatedSalePrice: parseFloat(e.target.value) || 0 })}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Custos de Manutenção */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Custos de Manutenção</CardTitle>
+                <CardDescription>
+                  Adicione os custos de reparo e manutenção estimados
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Lista de itens existentes */}
+                {currentSimulation.maintenanceItems.map((item) => (
+                  <div key={item.id} className="flex items-center gap-2 p-3 border rounded-lg">
+                    <div className="flex-1">
+                      <Input
+                        placeholder="Descrição"
+                        value={item.description}
+                        onChange={(e) => updateMaintenanceItem(item.id, e.target.value, item.cost)}
+                      />
+                    </div>
+                    <div className="w-32">
+                      <Input
+                        type="number"
+                        placeholder="0,00"
+                        value={item.cost || ''}
+                        onChange={(e) => updateMaintenanceItem(item.id, item.description, parseFloat(e.target.value) || 0)}
+                      />
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeMaintenanceItem(item.id)}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+
+                {/* Adicionar novo item */}
+                <div className="flex items-center gap-2 p-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
+                  <div className="flex-1">
+                    <Input
+                      placeholder="Descrição da manutenção"
+                      value={newMaintenanceDescription}
+                      onChange={(e) => setNewMaintenanceDescription(e.target.value)}
+                    />
+                  </div>
+                  <div className="w-32">
+                    <Input
+                      type="number"
+                      placeholder="0,00"
+                      value={newMaintenanceCost}
+                      onChange={(e) => setNewMaintenanceCost(e.target.value)}
+                    />
+                  </div>
+                  <Button
+                    onClick={handleAddMaintenanceItem}
+                    disabled={!newMaintenanceDescription.trim() || !newMaintenanceCost}
+                    size="sm"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Resultados */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Resultado da Simulação</CardTitle>
+                <CardDescription>
+                  Cálculos automáticos baseados nos dados inseridos
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 dark:text-gray-400">Valor da Compra:</span>
+                    <span className="font-medium">{formatCurrency(currentSimulation.purchasePrice)}</span>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Comissão ({currentSimulation.auctioneerCommissionPercent}%):
+                    </span>
+                    <span className="font-medium">
+                      {formatCurrency((currentSimulation.purchasePrice * currentSimulation.auctioneerCommissionPercent) / 100)}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 dark:text-gray-400">Total Manutenção:</span>
+                    <span className="font-medium">{formatCurrency(results.totalMaintenanceCost)}</span>
+                  </div>
+
+                  <Separator />
+
+                  <div className="flex justify-between items-center text-lg font-semibold">
+                    <span>Custo Total do Veículo:</span>
+                    <span>{formatCurrency(results.totalVehicleCost)}</span>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 dark:text-gray-400">Preço de Venda Estimado:</span>
+                    <span className="font-medium">{formatCurrency(currentSimulation.estimatedSalePrice)}</span>
+                  </div>
+
+                  <Separator />
+
+                  <div className="flex justify-between items-center text-xl font-bold">
+                    <span>Margem de Lucro:</span>
+                    <span className={getProfitColor(results.profitMargin)}>
+                      {formatCurrency(results.profitMargin)}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 dark:text-gray-400">Margem (%):</span>
+                    <span className={`font-medium ${getProfitColor(results.profitMargin)}`}>
+                      {results.profitPercentage.toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
+
+                {/* Indicador visual da margem */}
+                <div className={`mt-6 p-4 rounded-lg border ${
+                  results.profitMargin >= 0
+                    ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+                    : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+                }`}>
+                  <div className="text-center">
+                    <p className={`text-sm font-medium ${getProfitColor(results.profitMargin)}`}>
+                      {results.profitMargin >= 0
+                        ? '✓ Negócio Viável - Margem Positiva'
+                        : '⚠️ Prejuízo - Revisar Valores'
+                      }
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
+      )}
 
-        {/* Estimated Sale Price */}
-        <div>
-          <label className="text-sm font-medium mb-2 block">Preço de Venda Estimado (R$)</label>
-          <Input
-            type="number"
-            value={estimatedSalePrice || ''}
-            onChange={(e) => setEstimatedSalePrice(Number(e.target.value) || 0)}
-          />
+      {/* Empty State */}
+      {!currentSimulation && !showNewForm && (
+        <div className="text-center py-16">
+          <Calculator className="h-16 w-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            Nenhuma simulação ativa
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            Crie uma nova simulação para começar a calcular margens de lucro
+          </p>
+          <Button
+            onClick={() => setShowNewForm(true)}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Criar Primeira Simulação
+          </Button>
         </div>
-
-        {/* Results */}
-        <div className="border-t pt-4">
-          <h4 className="font-medium mb-3">Resumo da Simulação</h4>
-
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span>Valor do Lance:</span>
-              <span>{formatCurrency(purchasePrice)}</span>
-            </div>
-
-            <div className="flex justify-between">
-              <span>Comissão ({commissionPercent}%):</span>
-              <span>{formatCurrency(purchasePrice * (commissionPercent / 100))}</span>
-            </div>
-
-            <div className="flex justify-between">
-              <span>Total Manutenção:</span>
-              <span>{formatCurrency(results.totalMaintenanceCost)}</span>
-            </div>
-
-            <div className="flex justify-between font-medium border-t pt-2">
-              <span>Custo Total:</span>
-              <span>{formatCurrency(results.totalVehicleCost)}</span>
-            </div>
-
-            <div className="flex justify-between">
-              <span>Preço de Venda:</span>
-              <span>{formatCurrency(estimatedSalePrice)}</span>
-            </div>
-
-            <div className={`flex justify-between font-bold text-lg border-t pt-2 ${
-              results.profitMargin >= 0 ? 'text-green-600' : 'text-red-600'
-            }`}>
-              <span>Lucro:</span>
-              <div className="text-right">
-                <div>{formatCurrency(results.profitMargin)}</div>
-                <Badge
-                  variant={results.profitMargin >= 0 ? "default" : "destructive"}
-                  className="mt-1"
-                >
-                  {results.profitPercentage.toFixed(1)}%
-                </Badge>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   )
 }

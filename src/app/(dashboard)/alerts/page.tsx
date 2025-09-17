@@ -87,34 +87,6 @@ export default function AlertsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="bg-green-50 dark:bg-green-900/20 px-4 py-2 rounded-lg">
-            <div className="flex items-center gap-2">
-              <Bell className="h-4 w-4 text-green-600 dark:text-green-400" />
-              <span className="text-sm font-medium text-green-900 dark:text-green-100">
-                {activeAlertsCount} alerta{activeAlertsCount !== 1 ? 's' : ''} ativo{activeAlertsCount !== 1 ? 's' : ''}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex gap-2">
-            {activeAlertsCount > 0 && (
-              <Button
-                variant="outline"
-                onClick={simulateWhatsAppNotification}
-                className="text-green-600 border-green-200 hover:bg-green-50"
-              >
-                <Zap className="h-4 w-4 mr-2" />
-                Simular Notificação
-              </Button>
-            )}
-
-            <Button onClick={() => setIsCreateDialogOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Criar Novo Alerta
-            </Button>
-          </div>
-        </div>
       </div>
 
       {/* Alerts Grid - com controle de acesso */}

@@ -168,24 +168,36 @@ export default function VehiclesPage() {
         </div>
       </div>
 
-      {/* Filters - com controle de acesso */}
-      <AccessControl feature="filters">
-        <VehicleFiltersComponent
-          filters={filters}
-          onFiltersChange={handleFiltersChange}
-          onSaveAlert={handleSaveAlert}
-        />
-      </AccessControl>
-
-      {/* Vehicle Grid */}
-      <VehicleGrid vehicles={filteredVehicles} />
-
-      {/* Results Summary */}
-      {filteredVehicles.length > 0 && (
-        <div className="text-center text-sm text-gray-500 dark:text-gray-400 pt-6 border-t">
-          Exibindo {filteredVehicles.length} de {vehicles.length} veículos disponíveis
+      {/* Main Content - Layout com filtros laterais */}
+      <div className="flex flex-col xl:flex-row gap-6">
+        {/* Sidebar - Filtros (300px fixo em desktop, 100% em mobile) */}
+        <div className="w-full xl:w-72 xl:flex-shrink-0">
+          <div className="xl:sticky xl:top-6">
+            <AccessControl feature="filters">
+              <VehicleFiltersComponent
+                filters={filters}
+                onFiltersChange={handleFiltersChange}
+                onSaveAlert={handleSaveAlert}
+              />
+            </AccessControl>
+          </div>
         </div>
-      )}
+
+        {/* Main Content - Listagem de Veículos (resto da largura em desktop, 100% em mobile) */}
+        <div className="flex-1 min-w-0">
+          <div className="space-y-6">
+            {/* Vehicle Grid */}
+            <VehicleGrid vehicles={filteredVehicles} />
+
+            {/* Results Summary */}
+            {filteredVehicles.length > 0 && (
+              <div className="text-center text-sm text-gray-500 dark:text-gray-400 pt-6 border-t border-gray-200 dark:border-gray-700">
+                Exibindo {filteredVehicles.length} de {vehicles.length} veículos disponíveis
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
       {/* Create Alert Dialog */}
       <CreateAlertDialog

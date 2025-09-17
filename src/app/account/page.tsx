@@ -4,6 +4,10 @@ import React, { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useSubscription } from '@/contexts/SubscriptionContext'
 import { SubscriptionStatus } from '@/components/features/subscription/SubscriptionStatus'
+import { EditUserInfoModal } from '@/components/features/auth/EditUserInfoModal'
+import { PaymentMethodModal } from '@/components/features/subscription/PaymentMethodModal'
+import { NotificationSettingsModal } from '@/components/features/subscription/NotificationSettingsModal'
+import { ManageSubscriptionModal } from '@/components/features/subscription/ManageSubscriptionModal'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -29,6 +33,10 @@ export default function AccountPage() {
   } = useSubscription()
   
   const [isCanceling, setIsCanceling] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [showPaymentMethodModal, setShowPaymentMethodModal] = useState(false)
+  const [showNotificationModal, setShowNotificationModal] = useState(false)
+  const [showManageSubscriptionModal, setShowManageSubscriptionModal] = useState(false)
 
   const currentPlan = subscriptionPlans.find(plan => plan.id === subscription?.planId)
 
@@ -49,18 +57,24 @@ export default function AccountPage() {
     }
   }
 
-  const handleManageSubscription = () => {
-    // Redirecionar para página de planos
-    window.location.href = '/subscription'
+  const handleUpdatePaymentMethod = () => {
+    setShowPaymentMethodModal(true)
   }
 
-  const handleUpdatePaymentMethod = () => {
-    // Abrir modal ou redirecionar para atualização de método de pagamento
-    alert('Funcionalidade de atualização de método de pagamento será implementada em breve.')
+  const handleNotificationSettings = () => {
+    setShowNotificationModal(true)
+  }
+
+  const handleManageSubscription = () => {
+    setShowManageSubscriptionModal(true)
   }
 
   const handleBackToDashboard = () => {
     window.location.href = '/vehicles'
+  }
+
+  const handleEditInfo = () => {
+    setShowEditModal(true)
   }
 
   if (isLoading) {
@@ -161,7 +175,7 @@ export default function AccountPage() {
               </div>
               
               <div className="mt-4">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={handleEditInfo}>
                   Editar Informações
                 </Button>
               </div>
@@ -255,7 +269,7 @@ export default function AccountPage() {
                 </Button>
                 
                 <Button 
-                  onClick={() => alert('Funcionalidade em desenvolvimento')}
+                  onClick={handleNotificationSettings}
                   className="w-full justify-start"
                   variant="outline"
                 >
@@ -323,6 +337,32 @@ export default function AccountPage() {
           </div>
         </div>
       </div>
+
+      {/* Modais */}
+      <EditUserInfoModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+      />
+      
+      <PaymentMethodModal
+        isOpen={showPaymentMethodModal}
+        onClose={() => setShowPaymentMethodModal(false)}
+      />
+      
+      <NotificationSettingsModal
+        isOpen={showNotificationModal}
+        onClose={() => setShowNotificationModal(false)}
+      />
+      
+      <ManageSubscriptionModal
+        isOpen={showManageSubscriptionModal}
+        onClose={() => setShowManageSubscriptionModal(false)}
+        subscription={subscription}
+        currentPlan={currentPlan || null}
+        onUpgrade={(planId) => console.log('Upgrade to:', planId)}
+        onDowngrade={(planId) => console.log('Downgrade to:', planId)}
+        onCancel={handleCancelSubscription}
+      />
     </div>
   )
 }

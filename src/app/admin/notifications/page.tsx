@@ -3,13 +3,8 @@
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { 
-  Bell, 
-  FileText, 
-  Settings, 
-  BarChart3,
-  TrendingUp,
-  Users,
+import {
+  Bell,
   AlertTriangle,
   CheckCircle
 } from 'lucide-react'

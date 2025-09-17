@@ -2,6 +2,7 @@
 
 import { useSubscription } from '@/contexts/SubscriptionContext'
 import { useAuth } from '@/contexts/AuthContext'
+import { FeatureLockedCard } from '@/components/features/subscription/FeatureLockedCard'
 
 interface AccessControlProps {
   feature: 'filters' | 'alerts' | 'favorites' | 'calculator'
@@ -39,8 +40,8 @@ export function AccessControl({ feature, children, fallback }: AccessControlProp
     return <>{fallback}</>
   }
 
-  // Não mostrar div redundante, pois já há banner superior
-  return null
+  // Mostrar card específico para cada funcionalidade bloqueada
+  return <FeatureLockedCard feature={feature} />
 }
 
 export function useAccessControl() {

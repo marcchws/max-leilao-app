@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 interface PaymentFormData {
   cardNumber: string
@@ -12,8 +12,11 @@ interface PaymentFormData {
   phone: string
 }
 import { useSubscription } from '@/contexts/SubscriptionContext'
+import { useAuth } from '@/contexts/AuthContext'
+import { useRouter } from 'next/navigation'
 import { PricingGrid } from '@/components/features/subscription/PricingCard'
 import { CheckoutForm } from '@/components/features/subscription/CheckoutForm'
+import { LoginModal } from '@/components/features/auth/LoginModal'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -33,12 +36,33 @@ export default function PricingPage() {
     subscription, 
     isLoading 
   } = useSubscription()
+  const { updateUserSubscription, isAuthenticated } = useAuth()
+  const router = useRouter()
   
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
   const [showCheckout, setShowCheckout] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [showLoginModal, setShowLoginModal] = useState(false)
+
+  // Redirecionar usuários logados para a página de perfil
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/account')
+    }
+  }, [isAuthenticated, router])
+
 
   const handleSelectPlan = (planId: string) => {
+    // Verificar se o usuário está logado
+    if (!isAuthenticated) {
+      // Salvar o plano selecionado no localStorage para retornar após login
+      localStorage.setItem('selected_plan', planId)
+      
+      // Mostrar modal de login
+      setShowLoginModal(true)
+      return
+    }
+    
     setSelectedPlan(planId)
     setShowCheckout(true)
   }
@@ -52,10 +76,18 @@ export default function PricingPage() {
       // Aqui seria feita a integração real com o gateway de pagamento
       console.log('Processando pagamento:', paymentData)
       
+      // Atualizar status do usuário para assinante ativo
+      updateUserSubscription('active')
+      
       // Simular sucesso
-      alert('Assinatura realizada com sucesso!')
+      alert('Assinatura realizada com sucesso! Redirecionando para a página de veículos...')
       setShowCheckout(false)
       setSelectedPlan(null)
+      
+      // Redirecionar para a página de veículos após 1 segundo
+      setTimeout(() => {
+        router.push('/vehicles')
+      }, 1000)
       
     } catch (error) {
       console.error('Erro no checkout:', error)
@@ -69,6 +101,24 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Banner para usuários não logados */}
+      {!isAuthenticated && (
+        <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-blue-700">
+                <strong>Para assinar um plano, você precisa estar logado.</strong> 
+                {' '}Ao selecionar um plano, você será redirecionado para fazer login ou criar uma conta.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Header simples */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -249,6 +299,12 @@ export default function PricingPage() {
           isLoading={isProcessing}
         />
       )}
+
+      {/* Login Modal */}
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
     </div>
   )
 }

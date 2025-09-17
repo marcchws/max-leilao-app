@@ -68,18 +68,26 @@ export function VehicleFilters({ filters, onFiltersChange, onSaveAlert, classNam
         </div>
 
         <div className="space-y-4">
-          <div className="bg-gray-50 rounded-lg p-4 text-center">
-            <Lock className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-            <h4 className="font-medium text-gray-700 mb-1">Filtros Avançados</h4>
-            <p className="text-sm text-gray-500 mb-3">
-              Use filtros avançados para encontrar exatamente o que procura
-            </p>
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-dashed border-blue-300 rounded-lg p-4 text-center">
+            <div className="relative inline-block mb-3">
+              <Filter className="h-8 w-8 text-blue-400 mx-auto" />
+              <Lock className="h-4 w-4 text-blue-600 absolute -top-1 -right-1 bg-white rounded-full p-0.5" />
+            </div>
+
+            <h4 className="font-semibold text-blue-900 mb-2">🔍 Filtros Avançados Premium</h4>
+            <div className="space-y-1 text-sm text-blue-700 mb-4">
+              <p>✓ Busca por Estado e Cidade</p>
+              <p>✓ Faixa de Preço personalizada</p>
+              <p>✓ Filtro por Ano do veículo</p>
+              <p>✓ Busca por Marca e Modelo</p>
+            </div>
+
             <Button
               onClick={() => window.location.href = '/subscription'}
               className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               <Crown className="h-4 w-4 mr-2" />
-              Desbloquear Filtros
+              Liberar Filtros (7 dias grátis)
             </Button>
           </div>
 
