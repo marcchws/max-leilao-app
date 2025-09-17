@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { AlertCard } from '@/components/features/alerts/AlertCard'
 import { CreateAlertDialog } from '@/components/features/alerts/CreateAlertDialog'
+import { EditAlertDialog } from '@/components/features/alerts/EditAlertDialog'
+import { DeleteAlertDialog } from '@/components/features/alerts/DeleteAlertDialog'
 import { WhatsAppNotification, useWhatsAppNotifications } from '@/components/features/alerts/WhatsAppNotification'
 import { AccessControl } from '@/hooks/useAccessControl'
 import { TrialExpirationNotification } from '@/components/features/subscription/TrialExpirationNotification'
@@ -15,6 +17,9 @@ import { Plus } from 'lucide-react'
 export default function AlertsPage() {
   const [alerts, setAlerts] = useState<Alert[]>(mockAlerts)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null)
   const { notifications, dismissNotification } = useWhatsAppNotifications()
   const { user, getDaysUntilExpiry } = useSubscription()
 
@@ -30,12 +35,39 @@ export default function AlertsPage() {
   }
 
   const handleEditAlert = (alertId: string) => {
-    console.log('Edit alert:', alertId)
+    const alert = alerts.find(a => a.id === alertId)
+    if (alert) {
+      setSelectedAlert(alert)
+      setIsEditDialogOpen(true)
+    }
   }
 
   const handleDeleteAlert = (alertId: string) => {
-    setAlerts(prevAlerts => prevAlerts.filter(alert => alert.id !== alertId))
-    console.log('Delete alert:', alertId)
+    const alert = alerts.find(a => a.id === alertId)
+    if (alert) {
+      setSelectedAlert(alert)
+      setIsDeleteDialogOpen(true)
+    }
+  }
+
+  const confirmDeleteAlert = () => {
+    if (selectedAlert) {
+      setAlerts(prevAlerts => prevAlerts.filter(alert => alert.id !== selectedAlert.id))
+      setIsDeleteDialogOpen(false)
+      setSelectedAlert(null)
+    }
+  }
+
+  const handleUpdateAlert = (alertId: string, name: string, filters: VehicleFilters) => {
+    setAlerts(prevAlerts =>
+      prevAlerts.map(alert =>
+        alert.id === alertId
+          ? { ...alert, name, filters }
+          : alert
+      )
+    )
+    setIsEditDialogOpen(false)
+    setSelectedAlert(null)
   }
 
   const handleCreateAlert = (name: string, filters: VehicleFilters) => {
@@ -108,6 +140,28 @@ export default function AlertsPage() {
         isOpen={isCreateDialogOpen}
         onClose={() => setIsCreateDialogOpen(false)}
         onSave={handleCreateAlert}
+      />
+
+      {/* Edit Alert Dialog */}
+      <EditAlertDialog
+        isOpen={isEditDialogOpen}
+        onClose={() => {
+          setIsEditDialogOpen(false)
+          setSelectedAlert(null)
+        }}
+        onSave={handleUpdateAlert}
+        alert={selectedAlert}
+      />
+
+      {/* Delete Alert Dialog */}
+      <DeleteAlertDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => {
+          setIsDeleteDialogOpen(false)
+          setSelectedAlert(null)
+        }}
+        onConfirm={confirmDeleteAlert}
+        alertName={selectedAlert?.name || ''}
       />
 
       {/* WhatsApp Notifications */}

@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/contexts/AuthContext'
+import { formatPhoneNumber, isValidEmail } from '@/lib/utils'
 import { 
   Mail, 
   Lock, 
@@ -63,8 +64,18 @@ export default function LoginPage() {
         }
       } else {
         // Validações para registro
+        if (!formData.name.trim()) {
+          setError('Nome é obrigatório')
+          return
+        }
+        
+        if (!isValidEmail(formData.email)) {
+          setError('E-mail inválido')
+          return
+        }
+        
         if (formData.password !== formData.confirmPassword) {
-          setError('As senhas não coincidem')
+          setError('As senhas não conferem')
           return
         }
         if (formData.password.length < 6) {
@@ -184,8 +195,8 @@ export default function LoginPage() {
                   <Input
                     type="tel"
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="Ex: +5511999999999"
+                    onChange={(e) => setFormData({ ...formData, phone: formatPhoneNumber(e.target.value) })}
+                    placeholder="Ex: (11) 99999-9999"
                     className="pl-10"
                   />
                 </div>

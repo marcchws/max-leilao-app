@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -33,9 +34,41 @@ const states = [
 
 export function VehicleFilters({ filters, onFiltersChange, onSaveAlert, className }: VehicleFiltersProps) {
   const { canUseFilters, canUseAlerts } = useAccessControl()
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
   
   const updateFilter = (key: keyof FilterType, value: string | number | undefined) => {
     if (!canUseFilters) return
+    
+    // Limpar erro anterior
+    setValidationErrors(prev => ({ ...prev, [key]: '' }))
+    
+    // Validações específicas para cada campo
+    if (key === 'priceFrom' && typeof value === 'number' && filters.priceTo && value > filters.priceTo) {
+      setValidationErrors(prev => ({ ...prev, [key]: 'O valor mínimo não pode ser maior que o máximo' }))
+      return
+    }
+    
+    if (key === 'priceTo' && typeof value === 'number' && filters.priceFrom && value < filters.priceFrom) {
+      setValidationErrors(prev => ({ ...prev, [key]: 'O valor máximo não pode ser menor que o mínimo' }))
+      return
+    }
+    
+    if (key === 'yearFrom' && typeof value === 'number') {
+      const currentYear = new Date().getFullYear()
+      if (value < 1900 || value > currentYear + 1) {
+        setValidationErrors(prev => ({ ...prev, [key]: `Ano deve estar entre 1900 e ${currentYear + 1}` }))
+        return
+      }
+    }
+    
+    if (key === 'yearTo' && typeof value === 'number') {
+      const currentYear = new Date().getFullYear()
+      if (value < 1900 || value > currentYear + 1) {
+        setValidationErrors(prev => ({ ...prev, [key]: `Ano deve estar entre 1900 e ${currentYear + 1}` }))
+        return
+      }
+    }
+    
     onFiltersChange({ ...filters, [key]: value })
   }
 
@@ -217,18 +250,28 @@ export function VehicleFilters({ filters, onFiltersChange, onSaveAlert, classNam
         <div className="space-y-2">
           <label className="text-sm font-medium">Faixa de Preço</label>
           <div className="grid grid-cols-2 gap-2">
-            <Input
-              type="number"
-              placeholder="Mín (R$)"
-              value={filters.priceFrom || ''}
-              onChange={(e) => updateFilter('priceFrom', e.target.value ? Number(e.target.value) : undefined)}
-            />
-            <Input
-              type="number"
-              placeholder="Máx (R$)"
-              value={filters.priceTo || ''}
-              onChange={(e) => updateFilter('priceTo', e.target.value ? Number(e.target.value) : undefined)}
-            />
+            <div>
+              <Input
+                type="number"
+                placeholder="Mín (R$)"
+                value={filters.priceFrom || ''}
+                onChange={(e) => updateFilter('priceFrom', e.target.value ? Number(e.target.value) : undefined)}
+              />
+              {validationErrors.priceFrom && (
+                <p className="text-xs text-red-600 mt-1">{validationErrors.priceFrom}</p>
+              )}
+            </div>
+            <div>
+              <Input
+                type="number"
+                placeholder="Máx (R$)"
+                value={filters.priceTo || ''}
+                onChange={(e) => updateFilter('priceTo', e.target.value ? Number(e.target.value) : undefined)}
+              />
+              {validationErrors.priceTo && (
+                <p className="text-xs text-red-600 mt-1">{validationErrors.priceTo}</p>
+              )}
+            </div>
           </div>
         </div>
 
@@ -236,18 +279,28 @@ export function VehicleFilters({ filters, onFiltersChange, onSaveAlert, classNam
         <div className="space-y-2">
           <label className="text-sm font-medium">Ano</label>
           <div className="grid grid-cols-2 gap-2">
-            <Input
-              type="number"
-              placeholder="De"
-              value={filters.yearFrom || ''}
-              onChange={(e) => updateFilter('yearFrom', e.target.value ? Number(e.target.value) : undefined)}
-            />
-            <Input
-              type="number"
-              placeholder="Até"
-              value={filters.yearTo || ''}
-              onChange={(e) => updateFilter('yearTo', e.target.value ? Number(e.target.value) : undefined)}
-            />
+            <div>
+              <Input
+                type="number"
+                placeholder="De"
+                value={filters.yearFrom || ''}
+                onChange={(e) => updateFilter('yearFrom', e.target.value ? Number(e.target.value) : undefined)}
+              />
+              {validationErrors.yearFrom && (
+                <p className="text-xs text-red-600 mt-1">{validationErrors.yearFrom}</p>
+              )}
+            </div>
+            <div>
+              <Input
+                type="number"
+                placeholder="Até"
+                value={filters.yearTo || ''}
+                onChange={(e) => updateFilter('yearTo', e.target.value ? Number(e.target.value) : undefined)}
+              />
+              {validationErrors.yearTo && (
+                <p className="text-xs text-red-600 mt-1">{validationErrors.yearTo}</p>
+              )}
+            </div>
           </div>
         </div>
 

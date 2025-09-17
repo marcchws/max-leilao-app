@@ -31,7 +31,7 @@ interface PaymentMethodModalProps {
 }
 
 export function PaymentMethodModal({ isOpen, onClose }: PaymentMethodModalProps) {
-  const [paymentMethods] = useState<PaymentMethod[]>([
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
     {
       id: 'pm-1',
       type: 'card',
@@ -44,6 +44,9 @@ export function PaymentMethodModal({ isOpen, onClose }: PaymentMethodModalProps)
   ])
   
   const [showAddForm, setShowAddForm] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null)
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   const [newCard, setNewCard] = useState({
     number: '',
     expiryDate: '',
@@ -92,9 +95,34 @@ export function PaymentMethodModal({ isOpen, onClose }: PaymentMethodModalProps)
     alert('Método de pagamento definido como padrão!')
   }
 
-  const handleDeleteMethod = () => {
-    if (confirm('Tem certeza que deseja remover este método de pagamento?')) {
-      alert('Método de pagamento removido!')
+  const handleDeleteMethod = (method: PaymentMethod) => {
+    setSelectedMethod(method)
+    setShowDeleteConfirm(true)
+  }
+
+  const confirmDeleteMethod = async () => {
+    if (!selectedMethod) return
+    
+    setIsLoading(true)
+    try {
+      // Simular exclusão
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      // Remover método da lista
+      setPaymentMethods(prev => prev.filter(method => method.id !== selectedMethod.id))
+      
+      // Mostrar mensagem de sucesso
+      setShowSuccessMessage(true)
+      setShowDeleteConfirm(false)
+      setSelectedMethod(null)
+      
+      // Esconder mensagem após 3 segundos
+      setTimeout(() => setShowSuccessMessage(false), 3000)
+      
+    } catch {
+      setError('Erro ao remover método de pagamento. Tente novamente.')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -152,7 +180,7 @@ export function PaymentMethodModal({ isOpen, onClose }: PaymentMethodModalProps)
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={handleDeleteMethod}
+                      onClick={() => handleDeleteMethod(method)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -279,6 +307,69 @@ export function PaymentMethodModal({ isOpen, onClose }: PaymentMethodModalProps)
               Seus dados estão protegidos com criptografia SSL
             </span>
           </div>
+
+          {/* Mensagem de Sucesso */}
+          {showSuccessMessage && (
+            <div className="fixed top-4 right-4 z-50 bg-green-50 border border-green-200 rounded-md p-4 shadow-lg">
+              <div className="flex items-center space-x-2">
+                <div className="h-4 w-4 bg-green-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xs">✓</span>
+                </div>
+                <span className="text-sm text-green-800 font-medium">
+                  Cartão removido com sucesso!
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Modal de Confirmação de Exclusão */}
+          {showDeleteConfirm && selectedMethod && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="h-10 w-10 bg-red-100 rounded-full flex items-center justify-center">
+                    <AlertCircle className="h-5 w-5 text-red-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Confirmar Exclusão
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Esta ação não pode ser desfeita
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="mb-6">
+                  <p className="text-sm text-gray-700">
+                    Tem certeza que deseja remover o cartão <strong>{selectedMethod.brand} •••• {selectedMethod.last4}</strong>?
+                  </p>
+                </div>
+                
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowDeleteConfirm(false)
+                      setSelectedMethod(null)
+                    }}
+                    className="flex-1"
+                    disabled={isLoading}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={confirmDeleteMethod}
+                    className="flex-1"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Removendo...' : 'Confirmar'}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

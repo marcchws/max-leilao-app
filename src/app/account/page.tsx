@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { useSubscription } from '@/contexts/SubscriptionContext'
 import { SubscriptionStatus } from '@/components/features/subscription/SubscriptionStatus'
@@ -23,6 +24,7 @@ import {
 } from 'lucide-react'
 
 export default function AccountPage() {
+  const router = useRouter()
   const { user: authUser } = useAuth()
   const { 
     subscription, 
@@ -70,11 +72,31 @@ export default function AccountPage() {
   }
 
   const handleBackToDashboard = () => {
-    window.location.href = '/vehicles'
+    router.push('/vehicles')
   }
 
   const handleEditInfo = () => {
     setShowEditModal(true)
+  }
+
+  const handleExportPayments = () => {
+    // Simular exportação de dados
+    const csvContent = paymentHistory.map(payment => 
+      `${payment.id},${payment.status},${payment.amount},${new Date(payment.createdAt).toLocaleDateString('pt-BR')}`
+    ).join('\n')
+    
+    const csvHeader = 'ID,Status,Valor,Data\n'
+    const fullCsv = csvHeader + csvContent
+    
+    const blob = new Blob([fullCsv], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+    link.setAttribute('href', url)
+    link.setAttribute('download', `historico-pagamentos-${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   if (isLoading) {
@@ -198,7 +220,7 @@ export default function AccountPage() {
                     Histórico de Pagamentos
                   </h2>
                 </div>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={handleExportPayments}>
                   <Download className="h-4 w-4 mr-2" />
                   Exportar
                 </Button>

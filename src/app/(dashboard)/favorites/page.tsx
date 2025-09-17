@@ -1,6 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { VehicleGrid } from '@/components/features/auction-listing/VehicleGrid'
 import { useFavorites } from '@/contexts/FavoritesContext'
 import { AccessControl } from '@/hooks/useAccessControl'
@@ -11,6 +13,16 @@ import { Heart, Trash2 } from 'lucide-react'
 export default function FavoritesPage() {
   const { favoriteVehicles, clearAllFavorites } = useFavorites()
   const { user, getDaysUntilExpiry } = useSubscription()
+  const [showClearConfirmation, setShowClearConfirmation] = useState(false)
+
+  const handleClearAllFavorites = () => {
+    setShowClearConfirmation(true)
+  }
+
+  const confirmClearAll = () => {
+    clearAllFavorites()
+    setShowClearConfirmation(false)
+  }
 
   return (
     <div className="space-y-6">
@@ -46,7 +58,7 @@ export default function FavoritesPage() {
           {favoriteVehicles.length > 0 && (
             <Button
               variant="outline"
-              onClick={clearAllFavorites}
+              onClick={handleClearAllFavorites}
               className="text-red-600 border-red-200 hover:bg-red-50"
             >
               <Trash2 className="h-4 w-4 mr-2" />
@@ -95,6 +107,26 @@ export default function FavoritesPage() {
           </div>
         )}
       </AccessControl>
+
+      {/* Modal de Confirmação */}
+      <Dialog open={showClearConfirmation} onOpenChange={setShowClearConfirmation}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmar Exclusão</DialogTitle>
+            <DialogDescription>
+              Você tem certeza que deseja remover todos os seus favoritos? Esta ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowClearConfirmation(false)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={confirmClearAll}>
+              Confirmar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

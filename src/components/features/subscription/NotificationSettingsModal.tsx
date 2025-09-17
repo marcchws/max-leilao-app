@@ -5,12 +5,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { useAuth } from '@/contexts/AuthContext'
 import {
   Mail,
   MessageSquare,
   Smartphone,
   Check,
-  AlertCircle
+  AlertCircle,
+  Lock
 } from 'lucide-react'
 
 interface NotificationSettings {
@@ -39,6 +41,7 @@ interface NotificationSettingsModalProps {
 }
 
 export function NotificationSettingsModal({ isOpen, onClose }: NotificationSettingsModalProps) {
+  const { user } = useAuth()
   const [settings, setSettings] = useState<NotificationSettings>({
     email: {
       newVehicles: true,
@@ -63,10 +66,18 @@ export function NotificationSettingsModal({ isOpen, onClose }: NotificationSetti
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
+  // Verificar se o usuário tem acesso premium
+  const hasPremiumAccess = user?.subscriptionStatus === 'active' || user?.subscriptionStatus === 'trial'
+
   const handleToggle = <T extends keyof NotificationSettings>(
     category: T,
     setting: keyof NotificationSettings[T]
   ) => {
+    // Bloquear WhatsApp se não tiver acesso premium
+    if (category === 'whatsapp' && !hasPremiumAccess) {
+      return
+    }
+    
     setSettings(prev => ({
       ...prev,
       [category]: {
@@ -165,23 +176,49 @@ export function NotificationSettingsModal({ isOpen, onClose }: NotificationSetti
               <Badge variant="secondary" className="ml-2">Premium</Badge>
             </div>
             
+            {!hasPremiumAccess && (
+              <div className="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-md">
+                <div className="flex items-center space-x-2">
+                  <Lock className="h-4 w-4 text-orange-600" />
+                  <span className="text-sm text-orange-800">
+                    Recurso premium - 
+                    <button 
+                      onClick={() => window.location.href = '/subscription'}
+                      className="underline hover:no-underline ml-1"
+                    >
+                      Faça upgrade para desbloquear
+                    </button>
+                  </span>
+                </div>
+              </div>
+            )}
+            
             <div className="space-y-3">
               {[
                 { key: 'newVehicles', label: 'Novos veículos disponíveis', desc: 'Receba alertas quando novos veículos forem adicionados' },
                 { key: 'priceAlerts', label: 'Alertas de preço', desc: 'Notificações quando preços dos seus favoritos mudarem' },
                 { key: 'auctionReminders', label: 'Lembretes de leilão', desc: 'Lembretes antes dos leilões começarem' }
               ].map((item) => (
-                <div key={item.key} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={item.key} className={`flex items-center justify-between p-3 rounded-lg ${
+                  hasPremiumAccess ? 'bg-gray-50' : 'bg-gray-100'
+                }`}>
                   <div className="flex-1">
-                    <p className="font-medium text-sm">{item.label}</p>
-                    <p className="text-xs text-gray-500">{item.desc}</p>
+                    <p className={`font-medium text-sm ${!hasPremiumAccess ? 'text-gray-500' : ''}`}>
+                      {item.label}
+                    </p>
+                    <p className={`text-xs ${!hasPremiumAccess ? 'text-gray-400' : 'text-gray-500'}`}>
+                      {item.desc}
+                    </p>
                   </div>
                   <button
                     onClick={() => handleToggle('whatsapp', item.key as keyof NotificationSettings['whatsapp'])}
+                    disabled={!hasPremiumAccess}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      settings.whatsapp[item.key as keyof typeof settings.whatsapp] 
-                        ? 'bg-green-600' 
-                        : 'bg-gray-200'
+                      !hasPremiumAccess 
+                        ? 'bg-gray-300 cursor-not-allowed'
+                        : settings.whatsapp[item.key as keyof typeof settings.whatsapp] 
+                          ? 'bg-green-600' 
+                          : 'bg-gray-200'
                     }`}
                   >
                     <span

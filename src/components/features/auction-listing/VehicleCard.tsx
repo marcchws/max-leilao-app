@@ -1,10 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import Image from 'next/image'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Vehicle } from '@/lib/types'
-import { Heart, MapPin, Calendar, ExternalLink, Lock } from 'lucide-react'
+import { Heart, MapPin, Calendar, ExternalLink, Lock, AlertTriangle } from 'lucide-react'
 import { useAccessControl } from '@/hooks/useAccessControl'
 
 interface VehicleCardProps {
@@ -15,16 +16,50 @@ interface VehicleCardProps {
 
 export function VehicleCard({ vehicle, onFavoriteToggle, isFavorited = false }: VehicleCardProps) {
   const { canUseFavorites } = useAccessControl()
+  const [isCheckingLink, setIsCheckingLink] = useState(false)
+  const [linkStatus, setLinkStatus] = useState<'unknown' | 'available' | 'unavailable'>('unknown')
   
-  const handleBidClick = () => {
+  const checkLinkStatus = async (url: string): Promise<'available' | 'unavailable'> => {
+    try {
+      await fetch(url, { 
+        method: 'HEAD',
+        mode: 'no-cors' // Para evitar CORS issues
+      })
+      return 'available'
+    } catch {
+      return 'unavailable'
+    }
+  }
+
+  const handleBidClick = async () => {
     // Verificação de URL válida antes do redirecionamento
     if (!vehicle.originalUrl || vehicle.originalUrl === '') {
-      console.warn('URL do anúncio não disponível para o veículo:', vehicle.id)
+      alert('❌ URL do anúncio não disponível para este veículo.\n\nEntre em contato com o suporte se o problema persistir.')
       return
     }
 
-    // Abre em nova aba conforme RF-001
-    window.open(vehicle.originalUrl, '_blank', 'noopener,noreferrer')
+    setIsCheckingLink(true)
+    
+    try {
+      // Verificar status do link
+      const status = await checkLinkStatus(vehicle.originalUrl)
+      setLinkStatus(status)
+      
+      if (status === 'unavailable') {
+        alert('⚠️ O site do leiloeiro parece estar temporariamente fora do ar.\n\nPor favor, tente novamente mais tarde ou entre em contato diretamente com o leiloeiro.')
+        return
+      }
+      
+      // Abre em nova aba se o link estiver disponível
+      window.open(vehicle.originalUrl, '_blank', 'noopener,noreferrer')
+      
+    } catch (error) {
+      console.error('Erro ao verificar link:', error)
+      // Mesmo com erro, tenta abrir o link
+      window.open(vehicle.originalUrl, '_blank', 'noopener,noreferrer')
+    } finally {
+      setIsCheckingLink(false)
+    }
   }
 
   const handleFavoriteClick = () => {
@@ -126,9 +161,24 @@ export function VehicleCard({ vehicle, onFavoriteToggle, isFavorited = false }: 
         <Button
           onClick={handleBidClick}
           className="w-full"
+          disabled={isCheckingLink || linkStatus === 'unavailable'}
         >
-          <ExternalLink className="h-4 w-4 mr-2" />
-          Dar Lance
+          {isCheckingLink ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              Verificando...
+            </>
+          ) : linkStatus === 'unavailable' ? (
+            <>
+              <AlertTriangle className="h-4 w-4 mr-2" />
+              Site Indisponível
+            </>
+          ) : (
+            <>
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Dar Lance
+            </>
+          )}
         </Button>
       </div>
     </div>

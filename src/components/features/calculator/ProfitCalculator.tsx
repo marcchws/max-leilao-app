@@ -27,14 +27,36 @@ export function ProfitCalculator() {
   const [newSimulationName, setNewSimulationName] = useState('')
   const [newMaintenanceDescription, setNewMaintenanceDescription] = useState('')
   const [newMaintenanceCost, setNewMaintenanceCost] = useState('')
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
 
   const results = calculateResults()
 
+  const validateInput = (field: string, value: number) => {
+    const errors = { ...validationErrors }
+    
+    if (value < 0) {
+      errors[field] = 'Valor não pode ser negativo'
+    } else if (field === 'auctioneerCommissionPercent' && value > 100) {
+      errors[field] = 'Comissão não pode ser maior que 100%'
+    } else {
+      delete errors[field]
+    }
+    
+    setValidationErrors(errors)
+    return Object.keys(errors).length === 0
+  }
+
   const handleCreateSimulation = () => {
+    if (!newSimulationName.trim()) {
+      setValidationErrors({ name: 'Nome da simulação é obrigatório' })
+      return
+    }
+    
     if (newSimulationName.trim()) {
       createSimulation(newSimulationName.trim())
       setNewSimulationName('')
       setShowNewForm(false)
+      setValidationErrors({})
     }
   }
 
@@ -94,9 +116,17 @@ export function ProfitCalculator() {
                 id="simulation-name"
                 placeholder="Ex: Honda Civic Azul 2019"
                 value={newSimulationName}
-                onChange={(e) => setNewSimulationName(e.target.value)}
+                onChange={(e) => {
+                  setNewSimulationName(e.target.value)
+                  if (validationErrors.name) {
+                    setValidationErrors(prev => ({ ...prev, name: '' }))
+                  }
+                }}
                 onKeyDown={(e) => e.key === 'Enter' && handleCreateSimulation()}
               />
+              {validationErrors.name && (
+                <p className="text-xs text-red-600 mt-1">{validationErrors.name}</p>
+              )}
             </div>
             <div className="flex gap-2">
               <Button onClick={handleCreateSimulation} disabled={!newSimulationName.trim()}>
@@ -181,10 +211,19 @@ export function ProfitCalculator() {
                   <Input
                     id="purchase-price"
                     type="number"
+                    min="0"
                     placeholder="0,00"
                     value={currentSimulation.purchasePrice || ''}
-                    onChange={(e) => updateSimulation({ purchasePrice: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value) || 0
+                      if (validateInput('purchasePrice', value)) {
+                        updateSimulation({ purchasePrice: value })
+                      }
+                    }}
                   />
+                  {validationErrors.purchasePrice && (
+                    <p className="text-xs text-red-600 mt-1">{validationErrors.purchasePrice}</p>
+                  )}
                 </div>
 
                 <div>
@@ -192,11 +231,21 @@ export function ProfitCalculator() {
                   <Input
                     id="commission"
                     type="number"
+                    min="0"
+                    max="100"
                     step="0.1"
                     placeholder="5,0"
                     value={currentSimulation.auctioneerCommissionPercent || ''}
-                    onChange={(e) => updateSimulation({ auctioneerCommissionPercent: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value) || 0
+                      if (validateInput('auctioneerCommissionPercent', value)) {
+                        updateSimulation({ auctioneerCommissionPercent: value })
+                      }
+                    }}
                   />
+                  {validationErrors.auctioneerCommissionPercent && (
+                    <p className="text-xs text-red-600 mt-1">{validationErrors.auctioneerCommissionPercent}</p>
+                  )}
                 </div>
 
                 <div>
@@ -204,10 +253,19 @@ export function ProfitCalculator() {
                   <Input
                     id="sale-price"
                     type="number"
+                    min="0"
                     placeholder="0,00"
                     value={currentSimulation.estimatedSalePrice || ''}
-                    onChange={(e) => updateSimulation({ estimatedSalePrice: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value) || 0
+                      if (validateInput('estimatedSalePrice', value)) {
+                        updateSimulation({ estimatedSalePrice: value })
+                      }
+                    }}
                   />
+                  {validationErrors.estimatedSalePrice && (
+                    <p className="text-xs text-red-600 mt-1">{validationErrors.estimatedSalePrice}</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -234,9 +292,15 @@ export function ProfitCalculator() {
                     <div className="w-32">
                       <Input
                         type="number"
+                        min="0"
                         placeholder="0,00"
                         value={item.cost || ''}
-                        onChange={(e) => updateMaintenanceItem(item.id, item.description, parseFloat(e.target.value) || 0)}
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value) || 0
+                          if (value >= 0) {
+                            updateMaintenanceItem(item.id, item.description, value)
+                          }
+                        }}
                       />
                     </div>
                     <Button
@@ -262,6 +326,7 @@ export function ProfitCalculator() {
                   <div className="w-32">
                     <Input
                       type="number"
+                      min="0"
                       placeholder="0,00"
                       value={newMaintenanceCost}
                       onChange={(e) => setNewMaintenanceCost(e.target.value)}

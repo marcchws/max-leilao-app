@@ -150,9 +150,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       await new Promise(resolve => setTimeout(resolve, 1000))
       
       // Verificar se email já existe
-      const existingUser = mockUsers.find(u => u.email === userData.email)
+      const existingUser = mockUsers.find(u => u.email.toLowerCase() === userData.email.toLowerCase())
       if (existingUser) {
-        return { success: false, error: 'Email já cadastrado' }
+        return { success: false, error: 'Este e-mail já está em uso' }
       }
       
       // Criar novo usuário
