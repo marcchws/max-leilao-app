@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -68,9 +69,11 @@ export function MainNavigation() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <img 
+            <Image 
               src="/logo.svg" 
               alt="Max Leilão" 
+              width={32}
+              height={32}
               className="h-8 w-auto"
             />
           </Link>

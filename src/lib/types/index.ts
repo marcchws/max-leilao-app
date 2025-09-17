@@ -98,6 +98,7 @@ export interface PaymentHistory {
   currency: string
   status: 'succeeded' | 'pending' | 'failed' | 'canceled'
   paymentMethod: string
+  description: string
   gatewayPaymentId: string
   paidAt?: string
   failedAt?: string

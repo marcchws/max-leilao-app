@@ -12,8 +12,7 @@ import {
   EyeOff, 
   User, 
   Phone,
-  AlertCircle,
-  CheckCircle
+  AlertCircle
 } from 'lucide-react'
 
 interface LoginModalProps {
@@ -22,7 +21,7 @@ interface LoginModalProps {
   onSwitchToRegister?: () => void
 }
 
-export function LoginModal({ isOpen, onClose, onSwitchToRegister }: LoginModalProps) {
+export function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [isLogin, setIsLogin] = useState(true)
   const [formData, setFormData] = useState({
     name: '',

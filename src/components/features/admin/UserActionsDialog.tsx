@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { AdminUser, UserManagementAction } from '@/lib/types'
+import { AdminUser } from '@/lib/types'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

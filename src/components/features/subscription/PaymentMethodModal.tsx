@@ -88,11 +88,11 @@ export function PaymentMethodModal({ isOpen, onClose }: PaymentMethodModalProps)
     }
   }
 
-  const handleSetDefault = (methodId: string) => {
+  const handleSetDefault = () => {
     alert('Método de pagamento definido como padrão!')
   }
 
-  const handleDeleteMethod = (methodId: string) => {
+  const handleDeleteMethod = () => {
     if (confirm('Tem certeza que deseja remover este método de pagamento?')) {
       alert('Método de pagamento removido!')
     }
@@ -144,7 +144,7 @@ export function PaymentMethodModal({ isOpen, onClose }: PaymentMethodModalProps)
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleSetDefault(method.id)}
+                        onClick={handleSetDefault}
                       >
                         Definir como Padrão
                       </Button>
@@ -152,7 +152,7 @@ export function PaymentMethodModal({ isOpen, onClose }: PaymentMethodModalProps)
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleDeleteMethod(method.id)}
+                      onClick={handleDeleteMethod}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

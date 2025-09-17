@@ -89,7 +89,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           setUser(userData)
         }
       } catch {
-        console.error('Erro ao verificar autenticação:', error)
+        console.error('Erro ao verificar autenticação')
         localStorage.removeItem('auth_user')
       } finally {
         setIsLoading(false)
@@ -135,7 +135,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
       
       return { success: true }
-    } catch (error) {
+    } catch {
       return { success: false, error: 'Erro interno do servidor' }
     } finally {
       setIsLoading(false)
@@ -182,7 +182,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
       
       return { success: true }
-    } catch (error) {
+    } catch {
       return { success: false, error: 'Erro interno do servidor' }
     } finally {
       setIsLoading(false)

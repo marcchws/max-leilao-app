@@ -63,12 +63,15 @@ export function NotificationSettingsModal({ isOpen, onClose }: NotificationSetti
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  const handleToggle = (category: keyof NotificationSettings, setting: string) => {
+  const handleToggle = <T extends keyof NotificationSettings>(
+    category: T,
+    setting: keyof NotificationSettings[T]
+  ) => {
     setSettings(prev => ({
       ...prev,
       [category]: {
         ...prev[category],
-        [setting]: !prev[category][setting as keyof typeof prev[category]]
+        [setting]: !prev[category][setting]
       }
     }))
   }
@@ -134,7 +137,7 @@ export function NotificationSettingsModal({ isOpen, onClose }: NotificationSetti
                     <p className="text-xs text-gray-500">{item.desc}</p>
                   </div>
                   <button
-                    onClick={() => handleToggle('email', item.key)}
+                    onClick={() => handleToggle('email', item.key as keyof NotificationSettings['email'])}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                       settings.email[item.key as keyof typeof settings.email] 
                         ? 'bg-blue-600' 
@@ -174,7 +177,7 @@ export function NotificationSettingsModal({ isOpen, onClose }: NotificationSetti
                     <p className="text-xs text-gray-500">{item.desc}</p>
                   </div>
                   <button
-                    onClick={() => handleToggle('whatsapp', item.key)}
+                    onClick={() => handleToggle('whatsapp', item.key as keyof NotificationSettings['whatsapp'])}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                       settings.whatsapp[item.key as keyof typeof settings.whatsapp] 
                         ? 'bg-green-600' 
@@ -213,7 +216,7 @@ export function NotificationSettingsModal({ isOpen, onClose }: NotificationSetti
                     <p className="text-xs text-gray-500">{item.desc}</p>
                   </div>
                   <button
-                    onClick={() => handleToggle('push', item.key)}
+                    onClick={() => handleToggle('push', item.key as keyof NotificationSettings['push'])}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                       settings.push[item.key as keyof typeof settings.push] 
                         ? 'bg-purple-600' 

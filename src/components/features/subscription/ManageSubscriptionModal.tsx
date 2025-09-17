@@ -117,7 +117,7 @@ export function ManageSubscriptionModal({
       alert(`Downgrade para ${availablePlans.find(p => p.id === planId)?.name} realizado com sucesso!`)
       onDowngrade?.(planId)
       onClose()
-    } catch (error) {
+    } catch {
       alert('Erro ao fazer downgrade. Tente novamente.')
     } finally {
       setIsLoading(false)
@@ -131,7 +131,7 @@ export function ManageSubscriptionModal({
       alert('Assinatura cancelada com sucesso!')
       onCancel?.()
       onClose()
-    } catch (error) {
+    } catch {
       alert('Erro ao cancelar assinatura. Tente novamente.')
     } finally {
       setIsLoading(false)

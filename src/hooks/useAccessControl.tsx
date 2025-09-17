@@ -1,6 +1,5 @@
 'use client'
 
-import { useSubscription } from '@/contexts/SubscriptionContext'
 import { useAuth } from '@/contexts/AuthContext'
 import { FeatureLockedCard } from '@/components/features/subscription/FeatureLockedCard'
 
@@ -11,7 +10,6 @@ interface AccessControlProps {
 }
 
 export function AccessControl({ feature, children, fallback }: AccessControlProps) {
-  const { hasAccess } = useSubscription()
   const { user } = useAuth()
 
   // Verificar acesso baseado no usuário logado
@@ -48,7 +46,7 @@ export function useAccessControl() {
   const { user } = useAuth()
   
   // Função para verificar acesso a funcionalidades
-  const hasAccess = (feature: 'filters' | 'alerts' | 'favorites' | 'calculator'): boolean => {
+  const hasAccess = (): boolean => {
     if (!user) return false
     
     // Usuários com trial ativo têm acesso completo
@@ -95,7 +93,7 @@ export function useAccessControl() {
   }
 
   const canUsePremiumFeatures = (): boolean => {
-    return hasAccess('filters') || hasAccess('alerts') || hasAccess('favorites') || hasAccess('calculator')
+    return hasAccess()
   }
 
   const startTrial = async (userId: string): Promise<void> => {
@@ -111,9 +109,9 @@ export function useAccessControl() {
     canViewVehicles,
     canUsePremiumFeatures,
     startTrial,
-    canUseFilters: hasAccess('filters'),
-    canUseAlerts: hasAccess('alerts'),
-    canUseFavorites: hasAccess('favorites'),
-    canUseCalculator: hasAccess('calculator')
+    canUseFilters: hasAccess(),
+    canUseAlerts: hasAccess(),
+    canUseFavorites: hasAccess(),
+    canUseCalculator: hasAccess()
   }
 }

@@ -12,6 +12,7 @@ import {
   Award,
   Target
 } from 'lucide-react'
+import Image from 'next/image'
 import { 
  
  
@@ -123,9 +124,11 @@ export function RankingLeiloeiros({ className }: RankingLeiloeirosProps) {
 
                   {/* Logo do Leiloeiro */}
                   <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                    <img 
+                    <Image 
                       src={auctioneer.logo} 
                       alt={auctioneer.name}
+                      width={48}
+                      height={48}
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         e.currentTarget.src = '/placeholder-car.jpg'

@@ -9,8 +9,7 @@ import {
   User, 
   Mail, 
   Phone,
-  AlertCircle,
-  CheckCircle
+  AlertCircle
 } from 'lucide-react'
 
 interface EditUserInfoModalProps {

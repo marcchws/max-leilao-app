@@ -40,7 +40,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
   const { user: authUser } = useAuth() // Usar usuário do AuthContext
   const [subscription, setSubscription] = useState<Subscription | null>(null)
   const [subscriptionPlans, setSubscriptionPlans] = useState<SubscriptionPlan[]>([])
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([])
+  const [paymentMethods] = useState<PaymentMethod[]>([])
   const [paymentHistory, setPaymentHistory] = useState<PaymentHistory[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -136,9 +136,11 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
           {
             id: 'pay-1',
             userId: authUser?.id || 'user-1',
+            subscriptionId: 'sub-1',
             amount: 49.90,
             currency: 'BRL',
             status: 'succeeded',
+            paymentMethod: 'Cartão de Crédito',
             description: 'Assinatura Premium - Janeiro 2025',
             gatewayPaymentId: 'pi_stripe_123',
             createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString()
@@ -146,9 +148,11 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
           {
             id: 'pay-2',
             userId: authUser?.id || 'user-1',
+            subscriptionId: 'sub-1',
             amount: 49.90,
             currency: 'BRL',
             status: 'succeeded',
+            paymentMethod: 'Cartão de Crédito',
             description: 'Assinatura Premium - Dezembro 2024',
             gatewayPaymentId: 'pi_stripe_456',
             createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString()
@@ -156,9 +160,11 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
           {
             id: 'pay-3',
             userId: authUser?.id || 'user-1',
+            subscriptionId: 'sub-1',
             amount: 49.90,
             currency: 'BRL',
             status: 'succeeded',
+            paymentMethod: 'Cartão de Crédito',
             description: 'Assinatura Premium - Novembro 2024',
             gatewayPaymentId: 'pi_stripe_789',
             createdAt: new Date(Date.now() - 75 * 24 * 60 * 60 * 1000).toISOString()
@@ -171,7 +177,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
         
       } catch {
         setError('Erro ao carregar dados da assinatura')
-        console.error('Erro ao carregar dados:', err)
+        console.error('Erro ao carregar dados')
       } finally {
         setIsLoading(false)
       }
@@ -180,7 +186,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
     loadInitialData()
   }, [authUser])
 
-  const updateUser = (newUser: User) => {
+  const updateUser = () => {
     // Não precisamos mais gerenciar usuário aqui, pois vem do AuthContext
     console.log('updateUser chamado, mas usuário agora vem do AuthContext')
   }
@@ -196,7 +202,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
       // Simular chamada à API para atualizar dados da assinatura
       await new Promise(resolve => setTimeout(resolve, 500))
       // Aqui seria feita a chamada real para a API
-    } catch (err) {
+    } catch {
       setError('Erro ao atualizar assinatura')
     } finally {
       setIsLoading(false)
@@ -218,20 +224,20 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
         }
         updateSubscription(canceledSubscription)
       }
-    } catch (err) {
+    } catch {
       setError('Erro ao cancelar assinatura')
     } finally {
       setIsLoading(false)
     }
   }
 
-  const updatePaymentMethod = async (paymentMethodId: string) => {
+  const updatePaymentMethod = async () => {
     try {
       setIsLoading(true)
       // Simular atualização do método de pagamento
       await new Promise(resolve => setTimeout(resolve, 500))
       // Aqui seria feita a chamada real para a API
-    } catch (err) {
+    } catch {
       setError('Erro ao atualizar método de pagamento')
     } finally {
       setIsLoading(false)
@@ -239,7 +245,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
   }
 
   // Access control functions
-  const hasAccess = (feature: 'filters' | 'alerts' | 'favorites' | 'calculator'): boolean => {
+  const hasAccess = (): boolean => {
     if (!authUser) return false
     
     // Usuários com trial ativo têm acesso completo
@@ -264,9 +270,9 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
       // e o AuthContext seria atualizado com os novos dados do usuário
       console.log('Trial iniciado para usuário:', userId)
       
-    } catch (err) {
+    } catch {
       setError('Erro ao iniciar período de teste')
-      console.error('Erro ao iniciar trial:', err)
+      console.error('Erro ao iniciar trial')
     } finally {
       setIsLoading(false)
     }
@@ -280,7 +286,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
 
   // Função para verificar se o usuário pode usar funcionalidades premium
   const canUsePremiumFeatures = (): boolean => {
-    return hasAccess('filters') || hasAccess('alerts') || hasAccess('favorites') || hasAccess('calculator')
+    return hasAccess()
   }
 
   const isTrialActive = (): boolean => {
