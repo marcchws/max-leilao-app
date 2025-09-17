@@ -5,9 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { 
-  Bell, 
-  Mail, 
+import {
+  Mail,
   MessageSquare,
   Smartphone,
   Check,
@@ -88,7 +87,7 @@ export function NotificationSettingsModal({ isOpen, onClose }: NotificationSetti
         onClose()
       }, 1500)
       
-    } catch (err) {
+    } catch {
       setError('Erro ao salvar configurações. Tente novamente.')
     } finally {
       setIsLoading(false)
